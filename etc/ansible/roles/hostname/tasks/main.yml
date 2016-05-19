@@ -1,0 +1,4 @@
+---
+- name: persist the hostname
+  hostname: name={{ inventory_hostname }}
+

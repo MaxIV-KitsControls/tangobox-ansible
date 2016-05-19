@@ -1,0 +1,48 @@
+---
+#- name: copy EL rpm-gpg repo key
+#  copy: src=RPM-GPG-KEY-elrepo.org dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org owner=root group=root mode=0444
+#
+# MAXIV configuration
+#- name: configure el repo
+#  copy: src=elrepo.repo.maxiv dest=/etc/yum.repos.d/elrepo.repo owner=root group=root mode=0644
+#  when: domain=='maxiv.lu.se'
+#
+# MAXLAB configuration
+#- name: configure el repo
+#  copy: src=elrepo.repo.maxlab dest=/etc/yum.repos.d/elrepo.repo owner=root group=root mode=0644
+#  when: domain=='maxlab.lu.se'
+#
+
+- name: blacklist nouveau driver
+  copy: content='blacklist nouveau options nouveau modeset=0' dest=/etc/modprobe.d/blacklist-nouveau.conf
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6
+
+- name: install nvidia driver
+  #yum: name={{ item }} disablerepo='*' enablerepo='elrepo' state=present 
+  yum: name={{ item }} enablerepo='elrepo' state=latest
+  with_items:
+    - kmod-nvidia
+    - nvidia-x11-drv
+    - nvidia-x11-drv-32bit
+  notify:
+    - Restart server
+    - Wait for server to restart
+
+- name: disable nouveau driver from grub
+  lineinfile: dest=/etc/grub.conf regex='nomodeset rdblacklist=nouveau'
+  lineinfile: dest=/boot/grub/grub.conf regexp='^(\tkernel /vmlinuz-${ansible_kernel}((?!nomodeset rdblacklist=nouveau).)*)$' line='\1 nomodeset rdblacklist=nouveau' backrefs=yes state=present backup=yes
+  notify:
+    - Restart server
+    - Wait for server to restart
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6
+
+#- name: Push the screens configuration following the number of monitors defined
+#  copy: src=xorg.conf.{{ monitors }} dest=/etc/X11/xorg.conf owner=root group=root mode=0644 backup=yes
+#  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6
+#
+- name: Make sure the gmd global configuration directory exists
+  file: path=/var/lib/gdm/.config owner=gdm group=gdm mode=0755 state=directory
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+#- name: Push the screens configuration following the number of monitors defined
+#  copy: src=gdm.monitors-{{ monitors }}.xml dest=/var/lib/gdm/.config/monitors.xml owner=gdm group=gdm mode=0644 backup=yes
+#  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7

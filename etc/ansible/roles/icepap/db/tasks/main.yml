@@ -1,0 +1,14 @@
+---
+  # IcePAPCMS installation
+  - name: ensure that the latest IcePAPCMS package is installed
+    action: yum pkg=icepapcms state=latest
+
+  # Setup of MySQL DB (fixme - only needed for some servers) 
+  - name: ensure icepapcms db exists
+    mysql_db: name=icepapcms state=present
+    notify:
+      - create icepap db
+
+  - name: ensure that db user icepapcms is configured
+    mysql_user: name=icepapcms password=icepapcms priv="icepapcms.*:ALL" state=present
+    mysql_user: name=icepapcms host=% password=icepapcms priv="icepapcms.*:ALL" state=present

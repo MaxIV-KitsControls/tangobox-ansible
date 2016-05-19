@@ -1,0 +1,3 @@
+[submodule "etc/ansible/roles/iptables"]
+	path = etc/ansible/roles/iptables
+	url = https://github.com/osiell/ansible-iptables.git

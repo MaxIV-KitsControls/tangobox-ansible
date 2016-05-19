@@ -1,0 +1,28 @@
+---
+- name: ensure the Backup dir exists
+  file: path=/var/backup owner={{ backup_user }} group={{ backup_user }} mode=0755 state=directory
+
+# Make the known_host
+#- name: Add short name to file
+#  local_action: shell ssh-keyscan -p {{ansible_ssh_port|default(22)}} -H {{inventory_hostname}} 2> /dev/null >> {{keyfile}}
+#  ignore_errors: True
+#
+#- name: Add FQDN to file
+#  local_action: shell ssh-keyscan -p {{ansible_ssh_port|default(22)}} -H {{ansible_fqdn}} 2> /dev/null >> {{keyfile}}
+#  ignore_errors: True
+#
+#- name: Add IPv4 to file
+#  local_action: shell ssh-keyscan -p {{ansible_ssh_port|default(22)}} -H {{ansible_default_ipv4.address}} 2> /dev/null >> {{keyfile}}
+#  ignore_errors: True
+
+#- name: Fetch the keys
+#  fetch: src=/home/{{ backup_user }}/.ssh/id_rsa dest=/tmp/{{ backup_user }}_rsa
+#  fetch: src=/home/{{ backup_user }}/.ssh/id_rsa.pub dest=/tmp/{{ backup_user }}_rsa.pub
+
+#- name: Add the Backup User to the Authorized Key
+#  authorized_key: user={{ backup_user }} key="{{ lookup('file', '/tmp/{{ backup_user }}_rsa.pub') }}"
+
+#- shell: cat /home/{{ backup_user }}/.ssh/id_rsa
+#  register: private_backup
+#  #ignore_errors: True
+

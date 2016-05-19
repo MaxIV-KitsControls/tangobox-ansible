@@ -1,0 +1,3 @@
+---
+- name: update exportfs
+  command:  exportfs -va

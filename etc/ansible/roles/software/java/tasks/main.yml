@@ -1,0 +1,31 @@
+---
+- debug: var=java_oracle
+
+- name: Install the Oracle Java Runtime Environment
+  yum: name=wget state=present
+  when: network=='public'
+
+- name: Check if the correct java version is installeA
+  stat: path=/usr/java/{{ java_oracle.rpm.version }}/bin/java
+  register: st
+
+- name: Download the Oracle Java RPM
+  shell: 'wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" {{ java_oracle.rpm.base_url}}{{ java_oracle.rpm.name }}'
+  #get_url: 'validate_certs=no  --no-cookies headers="Cookie\: oraclelicense=accept-securebackup-cookie" url={{ java_oracle.rpm.base_url}}{{ java_oracle.rpm.name }}'
+  when: network=='public' and st.stat.exists==False
+
+- name: Install the Oracle Java Runtime Environment
+  yum: name=./{{ java_oracle.rpm.name }} state=present
+  when: network=='public' and st.stat.exists==False
+
+- name: Use Oracle Java
+  alternatives: name=java link=/usr/bin/java path=/usr/java/{{ java_oracle.rpm.version }}/bin/java
+  when: network=='public'
+
+- name: Install the Oracle Java Runtime Environment
+  yum: name=http://{{ repo_server }}/control/java/jre-8u45-linux-x64.rpm state=present
+  when: network=='private'
+
+- name: Use Oracle Java
+  alternatives: name=java link=/usr/bin/java path=/usr/java/jre1.8.0_45/bin/java
+  when: network=='private'

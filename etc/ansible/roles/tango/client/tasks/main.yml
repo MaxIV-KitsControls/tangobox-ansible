@@ -1,0 +1,35 @@
+---
+# This task set the file /etc/tangorc from the variable {{tango_host}}
+# Tango
+- name: ensure the Tango package are present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - tango-java
+    - PyTango
+    - jddd
+    - taurus
+    - sardana
+    - fandango
+
+- include: archiving.yml
+  tags: 
+  - archiving
+
+# Create a local operator account with limited access for the Control System user
+#- name: ensure the operator account is present
+#  user: name=controlroom generate_ssh_key=yes comment="Control Room Account" password='$6$rounds=40000$hFqlmHyRA212SdtD$jpcBgOwQaHsRxn3LDjXJ.bEfyE03U1ZeMnrmJIqz2mXRrqpXXPFyuwv/O0cx22INDiP4dguKsC0s8iGOMbluk1'
+#NOTE: The controlroom user is now created by the user role, and defined in the group_vars/tango-clients
+
+
+- name: Ensure the operator account has automatically the X11 forwarding enable
+  copy: src=ssh_config dest=/home/controlroom/.ssh/config owner=controlroom group=controlroom mode=600
+
+- name: Ensure the remmina package is present
+  yum: pkg={{ item }}  state=present
+  with_items:
+    - remmina
+    - remmina-plugins-vnc
+    - remmina-plugins-rdp
+  tags:
+  - remmina
+  

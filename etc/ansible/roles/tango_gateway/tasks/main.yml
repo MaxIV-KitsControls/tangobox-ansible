@@ -1,0 +1,26 @@
+---
+
+# Remove deprecated package and service
+
+- name: ensure the deprecated tangogateway service is disabled
+  service: name=tangogateway state=stopped enabled=no
+
+- name: ensure the deprecated tangogateway service is removed
+  file: name=/etc/systemd/system/tangogateway.service state=absent
+
+- name: ensure the deprecated python-tangogateway package is removed
+  yum: name=python-tangogateway state=absent
+
+# Basic installation
+- name: ensure the tango-gateway package is present
+  yum: name=tango-gateway state=latest update_cache=yes
+
+# Service installation
+
+- name: ensure the tango-gateway service is installed
+  template: src=tango-gateway.service dest=/etc/systemd/system/tango-gateway.service
+
+# NTP configuration
+- name: ensure the service is enabled and running
+  service: name=tango-gateway state=started enabled=yes
+

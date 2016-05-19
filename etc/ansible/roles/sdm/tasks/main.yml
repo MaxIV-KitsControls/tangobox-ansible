@@ -1,0 +1,44 @@
+---
+- name: install AD domain packages
+  yum: name={{ item }} state=present
+  with_items:
+    - realmd
+    - samba
+    - samba-common
+    - oddjob
+    - oddjob-mkhomedir
+    - pexpect
+    - expect
+
+# TODO: Need a fine tuning as sssd.conf is also configured for/by realm
+#- name: Ensure no previous LDAP is present
+#  file: path=/etc/sssd/sssd.conf state=absent backup=True
+
+- name: Join the domain
+  shell: realm list
+  register: realm_list
+  changed_when: "{{ realm_list.stdout.find('maxlab.lu.se') == -1 }}"
+  notify:
+    - Send input parameter
+    - Join the realm
+
+# TODO: Idempotent
+# TODO: Try to reuse the SUDO password
+#- name: Join the domain
+#  expect:
+#    command: realm join -U {{ ansible_user }} maxlab.lu.se 
+#    responses:
+#      (?i)password: "{{ REALM_PASSWORD }}"
+
+#  shell: realm join -U vinhar{{ ansible_user }} maxlab.lu.se
+#  register: realm_join
+#  #changed_when: "not realm_join.stdout.find('Already joined to this domain')"
+#  ignore_errors: true
+#  shell: /bin/true
+
+#- debug: var=realm_join
+
+
+- name: configure the users of active directory
+  template: src=realmd.conf dest=/etc/realmd.conf owner=root mode=644 backup=true
+

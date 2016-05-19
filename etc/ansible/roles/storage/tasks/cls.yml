@@ -1,0 +1,46 @@
+---
+# CLS connection
+- name: ensure the CLS packages are present
+  yum: pkg=$item state=latest
+  with_items:
+    - sssd-tools
+    - sssd-client
+    - sssd
+    - openldap-clients
+    - nfs-utils
+    - zsh
+    - nss-pam-ldapd
+
+# Maxlab configuration
+#- name: Fix the bug with /usr/sbin/authconf (http://bugs.centos.org/view.php?id=5624)
+#  lineinfile: dest=/usr/sbin/authconfig regexp='^locale.setlocale' line='locale.setlocale(locale.LC_ALL, None)' state=present
+  
+- name: Force the authentification conf
+  command: /usr/bin/authconfig --enableldap --enableldapauth --enableldaptls --ldapserver='ldap://srv-ldap-0.maxlab.lu.se' --ldapbasedn='dc=maxlab,dc=lu,dc=se' --enableshadow --enablelocauthorize --disablecache --disablemd5 --disablenis  --disablefingerprint --disablekrb5 --disablewinbind --disablewinbindauth --updateall
+  
+- name: ensure the LDAP connection is working 
+  command: ldapsearch -x cn=KITS
+  
+- name: ensure tls doesn t require certification
+  ini_file: dest=/etc/sssd/sssd.conf section=domain/default option=ldap_tls_reqcert value=never
+  notify:
+  - restart sssd
+  
+- name: ensure the LDAP configuration with TLS
+  lineinfile: dest=/etc/openldap/ldap.conf state=present regexp='^TLS_REQCERT' line='TLS_REQCERT allow'
+
+- name: ensure the user comes from LDAP 
+  command: id vinhar
+  
+- name: ensure KITS group has sudo priviledges
+  lineinfile: dest=/etc/sudoers state=present regexp='^%KITS' line='%KITS   ALL=(ALL)       ALL'
+
+# NFS HOME
+- name: ensure the NFS mount dir exists
+  file: path=/mxn/home owner=root group=MAX-Lab mode=0755 state=directory
+
+- name: ensure the NFSv4 domain is correct
+  ini_file: dest=/etc/idmapd.conf section=General option=Domain value=maxlab.lu.se
+- name: ensure the home dir is mounted
+  mount: name=/mxn/home src=srv-storage-0.maxlab.lu.se:/mxn/home fstype=nfs opts='defaults,nosuid' state=present
+# HOW TO ADD the computer to storage:/etc/exports ???  

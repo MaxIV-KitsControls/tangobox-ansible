@@ -1,0 +1,11 @@
+---
+- name: MML is installed
+  #Maybe one day
+  #yum: name=mml state=present
+  stat: path=/mxn/groups/operators/controlroom/MATLAB/MML/mml
+
+- name: Register the MML toolbox to automatically load it at start up (1/2)
+  lineinfile: dest='/opt/matlab-R2013a/toolbox/local/pathdef.m' line="'/mxn/groups/operators/controlroom/MATLAB/MML/mml:', ..." insertbefore='%%% END ENTRIES %%%'
+
+- name: Register the MML toolbox to automatically load it at start up (1/2)
+  lineinfile: dest='/opt/matlab-R2013a/toolbox/local/pathdef.m' line="'/mxn/groups/operators/controlroom/MATLAB/MML:', ..." insertbefore='%%% END ENTRIES %%%'

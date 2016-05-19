@@ -1,0 +1,36 @@
+---
+- name: Install prerequisite of Elegant
+  yum: name={{ item }} state=present
+  with_items:
+    - mpich2-devel
+    - blas
+    - gsl
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+
+- name: Install Elegant rpm
+  yum: name={{ item }} state=present
+  with_items:
+    - http://{{ repo_server }}/control/elegant/elegant-26.0.2-1.rhel.6.5.mpich2.x86_64.rpm
+    - http://{{ repo_server }}/control/elegant/SDDS-conf-3.2-1.el6.noarch.rpm
+    - http://{{ repo_server }}/control/elegant/SDDSJava-3.0-1.rhel.6.4.x86_64.rpm
+    - http://{{ repo_server }}/control/elegant/SDDSPython-3.0-1.rhel.6.4.x86_64.rpm
+    - http://{{ repo_server }}/control/elegant/SDDSToolKit-3.2-1.rhel.6.5.x86_64.rpm
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+
+- name: Install prerequisite of Elegant
+  yum: name={{ item }} state=present
+  with_items:
+    - mpich-devel
+    - blas
+    - gsl
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: Install Elegant rpm
+  yum: name={{ item }} state=present
+  with_items:
+    - elegant-29.0.2-1
+    - SDDSToolKit-3.4-1
+    - SDDSToolKit-devel-3.4-1
+    - SDDSJava-3.0-1
+    - SDDSPython-3.0-1
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"

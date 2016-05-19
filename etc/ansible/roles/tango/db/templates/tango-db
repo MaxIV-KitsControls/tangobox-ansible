@@ -1,0 +1,2 @@
+MYSQL_USER={{ tango_mysql_user }}
+MYSQL_PASSWORD={{ tango_mysql_password }}

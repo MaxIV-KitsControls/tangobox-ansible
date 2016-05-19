@@ -1,0 +1,93 @@
+########################
+#                       #
+# Configuration of      #
+# TangoBox		#
+# Production  computers #
+#                       #
+#########################
+[all:vars]
+domain=tango-controls.org
+#nfs_server=srv-storage-0.maxiv.lu.se
+
+# Overwrite the default os server if the control system is located in the private network
+# default is private
+network=public
+
+# defined the local server only if in a public  network (network=public)
+tango_rpm_server=http://pubrepo.maxiv.lu.se/rpm
+
+# defined the local server only if in a private network (network=private)
+#ntp_server=ntp.maxiv.lu.se
+#repo_server=repo.maxiv.lu.se
+#ldap_server=srv-ldap-2.maxiv.lu.se
+#smtp_server=smtp.maxiv.lu.se
+
+# Host variables
+# users=[{'name':'tango', 'group':'tangoers'}]
+# desktop=True          -> Install the default desktop env.
+# matlab=True           -> Install Matlab and the Tango binding
+# matlab_license=False  -> Don't try to install the license of Matlab
+# elegant=True          -> Install Elegant
+# tango_hdb=True        -> Install and configure the Tango HDB archiving
+# tango_sdb=True        -> Install and configure the Tango Snapshot
+# tango_adb=True        -> Install and configure the Tango Alarm Logging
+
+###################
+# BY CONTROL SYSTEM
+###################
+[developments:children]
+tango-sandbox
+
+#
+# TangoBox Control System
+#########################
+
+# This define the architecture of Tango
+# Each role is a component of this control system
+[tango-sandbox:children]
+tango-sandbox-cs
+tango-sandbox-ec
+tango-sandbox-cc
+tango-sandbox-adb
+
+# This define the variables of this control system
+[tango-sandbox:vars]
+tango_host=127.0.0.1:10000
+icepapcms_db=tangobox
+client_server=tangobox
+
+[tango-sandbox-cs]
+tangobox
+
+[tango-sandbox-ec]
+tangobox
+
+[tango-sandbox-cc]
+tangobox ansible_ssh_host=10.0.1.30 desktop=True
+
+[tango-sandbox-adb]
+tangobox 
+
+[tango-sandbox-elog]
+tangobox
+
+# ROLE
+# Associate the generic roles
+##################
+[tango-db:children]
+tango-sandbox-cs
+
+[tango-server:children]
+tango-sandbox-ec
+
+[tango-client:children]
+tango-sandbox-cc
+
+[tango-archiving:children]
+tango-sandbox-adb
+
+[icepap-db:children]
+tango-sandbox-cs
+ 
+[icepap-client:children]
+tango-sandbox-cc

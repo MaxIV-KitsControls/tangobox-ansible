@@ -1,0 +1,10 @@
+[Unit]
+Description=Tango gateway service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/tango-gateway
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

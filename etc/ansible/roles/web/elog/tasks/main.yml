@@ -1,0 +1,35 @@
+---
+# Let's try to install the elog
+- name: Ensure the dependencies of the Elog are install
+  yum: name=ImageMagick state=latest
+
+#- name: Ensure the directory is created for the local installation
+#  file: path=/usr/local/share/midas-psi-ch-elog state=directory
+#
+#- name: Ensure the RPM is copied for a local installation
+#  copy: src=elog-latest.i386.rpm dest=/usr/local/share/midas-psi-ch-elog 
+#
+# ISSUE: It should be possible to directly use the yum module with an url
+# But it does not seems to work on 1.9.3 
+#
+- name: Download the Elog RPM file
+  get_url: url=http://{{ repo_server }}/control/elog/midas-psi-ch-elog/elog-latest.i386.rpm dest=/tmp/elog-latest.i386.rpm mode=0440
+  when: network == 'private'
+
+- name: Download the Elog RPM file
+  get_url: url=http://midas.psi.ch/elog/download/RPMS/elog-latest.i386.rpm dest=/tmp/elog-latest.i386.rpm mode=0440
+  when: network == 'public'
+
+- name: Ensure the local RPM is installed
+  yum: name=/tmp/elog-latest.i386.rpm state=present
+
+#- name: Ensure the MAXIV Theme is installed
+# Should be a rpm and under git
+#  unarchive: src=maxiv-theme.tar.gz dest=/usr/local/elog
+
+#- name: Ensure Elog start with the MAXIV configuration
+#  copy: src=elogd.cfg dest=/usr/local/elog/elogd.cfg backup=yes
+#  notify: restart elogd
+
+- name: Ensure the daemon is running and start at reboot
+  service: name=elogd state=started enabled=yes runlevel=345

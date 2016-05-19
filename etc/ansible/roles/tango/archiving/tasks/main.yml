@@ -1,0 +1,10 @@
+---
+# This role is maybe not idempotent as it use sql script to generate db
+- { include: common.yml, tango_archiver: 'hdb', when: tango_hdb is defined }
+- { include: common.yml, tango_archiver: 'tdb', when: tango_tdb is defined }
+- { include: common.yml, tango_archiver: 'sdb', when: tango_sdb is defined }
+
+# These roles require json2tango to works
+- { include: hdb.yml, when: tango_hdb is defined  }
+- { include: tdb.yml, when: tango_tdb is defined  }
+- { include: snap.yml, when: tango_sdb is defined  }

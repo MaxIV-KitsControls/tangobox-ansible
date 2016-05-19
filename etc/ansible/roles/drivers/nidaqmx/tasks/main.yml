@@ -1,0 +1,47 @@
+---  
+#- name: Ensure the kernel is correct
+#  command: cat /boot/config-${ansible_kernel} | grep CONFIG_4KSTACKS
+# Download the iso to mount locally
+- name: Download the NI DAQmx ISO
+  # Here the name of centos is not coherent between the directory and the file name
+  get_url: url=http://srv-repo-0.maxiv.lu.se/control/nidaq/DAQmx802f0.iso dest=/tmp
+
+- name: Ensure the mnt directory exists
+  file: path=/mnt/nidaqmx state=directory owner=root
+
+- name: Mount NI DAQmx image
+  mount: src=/tmp/DAQmx802f0.iso name=/mnt/nidaqmx opts=ro,loop fstype=iso9660 state=mounted
+
+# TODO Check if 32 bits
+# TODO Check if 4KSTACKS not set
+- name: ensure the os boot with the 32 bits memory limit (Change the memory limit)
+  lineinfile: dest=/boot/grub/grub.conf regexp='^(\tkernel /vmlinuz-${ansible_kernel}.*)( mem=\d+M)(.*)$' line='\1 mem=4096M\3' backrefs=yes state=present backup=yes
+  tags:
+    - debug
+
+- name: ensure the os boot with the 32 bits memory limit (add the parameter )
+  lineinfile: dest=/boot/grub/grub.conf regexp='^(\tkernel /vmlinuz-${ansible_kernel}((?!mem=\d+M).)*)$' line='\1 mem=4096M' backrefs=yes state=present backup=yes
+  tags:
+    - debug
+    
+- name: Install required packages for recompiling the kernel modules
+  yum: name={{ item }}
+  with_items: 
+   - yum-presto 
+   - gcc 
+   - gcc-c++ 
+   - kernel-devel 
+   - kernel-headers 
+   - make
+   
+- name: Link kernel headers so the driver installer can find them
+  file: src=/usr/src/kernels/{{ ansible_kernel }} dest=/usr/src/linux-{{ ansible_kernel }} state=link force=yes
+
+# Non interaction action ...
+- name: Run NIDAQ install script
+  #shell: ./INSTALL executable=/bin/sh chdir=/mnt/nidaqmx
+  shell: /bin/true
+  notify:
+    - NIDAQMX Installation | send input parameter
+    - NIDAQMX Installation | install kernel drivers and reboot
+    - Wait for server to restart

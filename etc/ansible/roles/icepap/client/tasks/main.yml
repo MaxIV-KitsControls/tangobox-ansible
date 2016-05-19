@@ -1,0 +1,13 @@
+---
+  # IcePAPCMS installation
+  - name: ensure that the latest IcePAPCMS package is installed
+    action: yum pkg=icepapcms state=latest
+  - name: ensure that the python-storm-mysql package is installed
+    action: yum pkg=python-storm-mysql state=latest
+  
+  # IcePAPCMS config
+  - name: ensure that the config file path exists 
+    file: path=/etc/icepapcms state=directory
+  - name: copy the standard icepapcms.conf to /etc/icepapcms
+    template: src=icepapcms.conf dest=/etc/icepapcms/icepapcms.conf owner=root group=root mode=644 backup=yes
+

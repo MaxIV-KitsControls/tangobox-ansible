@@ -1,0 +1,9 @@
+---
+- name: Ensure the remmina configuration is present
+  file: path=/home/controlroom/.remmina  owner=controlroom group=controlroom state=directory
+
+- name: Ensure the remmina configuration of the scope are distributed
+  template: src=scope.remmina dest=/home/controlroom/.remmina/{{ item.name }}.remmina  owner=controlroom group=controlroom
+  with_items: scopes
+  tags:
+  - remmina

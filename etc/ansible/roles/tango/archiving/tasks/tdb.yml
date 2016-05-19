@@ -1,0 +1,11 @@
+---
+- name: ensure that db user is configured
+  mysql_user: name=tdbarchiver password=tdbarchiver priv="tdb.*:ALL" state=present
+  mysql_user: name=tdbarchiver host=% password=tdbarchiver priv="tdb.*:ALL" state=present
+  tags:
+    - RT5669
+
+- name: Create the dsconfig file
+  template: src=tdb.json dest=~/.tango/tdb.json
+  notify:
+    - Configure TDB Devices

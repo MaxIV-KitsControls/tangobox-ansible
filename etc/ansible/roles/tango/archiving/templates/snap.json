@@ -1,0 +1,63 @@
+{
+    "servers": {
+        "SnapArchiver/01":{
+            "SnapArchiver":{
+                "ARCHIVING/SNAP/SNAPARCHIVER-01":{
+                    "properties":{
+                    }
+                }
+            }
+        },
+        "SnapManager/01":{
+            "SnapManager":{
+                "ARCHIVING/SNAP/SNAPMANAGER-01":{
+                    "properties":{
+                    }
+                }
+            }
+        },
+        "SnapExtractor/01":{
+            "SnapExtractor":{
+                "ARCHIVING/SNAP/SNAPEXTRACTOR-01":{
+                    "properties":{
+                    }
+                }
+            }
+        }
+    },
+    "classes": {
+        "SnapArchiver":{
+            "properties":{
+                "beansFileName": "{{ snap.xml_file }}",
+                "DbHost": "{{ inventory_hostname }}",
+                "DbName": "snap",
+                "DbPassword": "snaparchiver",
+                "DbSchema": "snap",
+                "DbUser": "snaparchiver",
+                "Facility": "false"
+            }
+        },
+        "SnapExtractor":{
+            "properties":{
+                "beansFileName": "{{ snap.xml_file }}",
+                "DbHost": "{{ inventory_hostname }}",
+                "DbName": "snap",
+                "DbPassword": "snapbrowser",
+                "DbSchema": "snap",
+                "DbUser": "snapbrowser",
+                "Facility": "false"
+            }
+        },
+        "SnapManager":{
+            "properties":{
+                "beansFileName": "{{ snap.xml_file }}",
+                "DbHost": "{{ inventory_hostname }}",
+                "DbName": "snap",
+                "DbPassword": "snaparchiver",
+                "DbSchema": "snap",
+                "DbUser": "snaparchiver",
+                "Facility": "false"
+            }
+        }
+    }
+}

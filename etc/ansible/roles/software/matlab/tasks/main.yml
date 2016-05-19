@@ -1,0 +1,55 @@
+---
+# Need a variable matlab.installation_key corresponding to the File Installation Key
+#- name: Deploy the Matlab installation config file with a specific File Installation Key
+#  template: src=file_installation_key.txt dest=/var/matlab/file_installation_key.txt
+  
+- name: Deploy the Matlab activation config file (create directory)
+  file: dest=/var/matlab state=directory
+- name: Deploy the Matlab activation config file 
+  copy: src=activation.ini dest=/var/matlab/activation.ini
+
+- name: Deploy the license file (create directory)
+  file: dest=/etc/matlab state=directory
+
+- name: Deploy the license file
+  copy: src={{ matlab_license_file }} dest=/etc/matlab/license.lic
+  when: matlab_license == True
+
+
+#- copy: src={{ item }} dest=/tmp/{{ item }}
+#  with_items:
+#    - matlab-R2013a-8.1-1.maxiv.machine.x86_64.rpm
+#    - matlab-R2013a-environment-module-8.1-1.maxiv.machine.noarch.rpm
+#    - matlab-R2013a-help-8.1-1.maxiv.machine.noarch.rpm
+#    - matlab-R2013a-shell-profile-8.1-1.maxiv.machine.noarch.rpm
+#    - matlab-R2013a-toolbox-8.1-1.maxiv.machine.x86_64.rpm
+
+- name: Deploy Matlab
+  yum: name={{ item }} state=present
+  with_items:
+    - matlab-R2013a
+  notify:
+    - activate Matlab
+
+- name: Deploy  the Matlab toolboxes
+  yum: name={{ item }} state=present
+  with_items:
+    - matlab-R2013a-toolbox
+    - matlab-R2013a-help
+    - matlab-R2013a-environment-module
+    - matlab-R2013a-shell-profile
+#  notify:
+#    - activate Matlab
+
+- name: An alias point to the matlab start up script
+  lineinfile: dest=/etc/profile.d/matlab-R2013a.sh line="alias matlab='/opt/matlab-R2013a/bin/matlab'"
+
+
+#- name: Force the OS to take over the matlab system library | Prepare /etc/ld.so.preload.d
+#  file: dest=/etc/ld.so.preload.d state=directory mode=0755 owner=root
+#
+#- name: Force the OS to take over the matlab system library | Copy a standard /etc/ld.so.preload
+#  copy: src=ld.so.preload dest=/etc/ld.so.preload mode=0644 owner=root
+#
+#- name: Force the OS to take over the matlab system library | Copy a standard /etc/ld.so.preload
+#  copy: src=ld.so.preload.matlab dest=/etc/ld.so.preload.d/matlab.conf mode=0644 owner=root

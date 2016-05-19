@@ -1,0 +1,4 @@
+#!/usr/bin/expect
+
+spawn realm join -U {{ ansible_env.SUDO_USER }} maxlab.lu.se
+expect "(?i)password" { send {{ REALM_PASSWORD }} }

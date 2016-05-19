@@ -1,0 +1,4 @@
+---
+# Tango Archiving system
+- name: make sure the Tango archiving and snapshot packages are installed and up to date
+  yum: pkg=tango-archiving state=latest

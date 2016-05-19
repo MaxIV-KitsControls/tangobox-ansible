@@ -1,0 +1,12 @@
+---
+mysql_packages:
+  - mysql
+  - mysql-server
+  - MySQL-python
+  - perl-DBD-MySQL
+mysql_daemon: mysql
+mysql_log_error: /var/log/mysql/mysql.log
+mysql_syslog_tag: mysql
+mysql_pid_file: /var/run/mysql/mysql.pid
+mysql_etc_my_cnf: /etc/my.cnf
+mysql_settings: {}

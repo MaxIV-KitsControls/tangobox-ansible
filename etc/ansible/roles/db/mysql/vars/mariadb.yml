@@ -1,0 +1,13 @@
+---
+mysql_packages:
+  - mariadb
+  - mariadb-server
+  - mariadb-libs
+  - MySQL-python
+  - perl-DBD-MySQL
+mysql_daemon: mariadb
+mysql_log_error: /var/log/mariadb/mariadb.log
+mysql_syslog_tag: mariadb
+mysql_pid_file: /var/run/mariadb/mariadb.pid
+mysql_etc_my_cnf: /etc/my.cnf.d/server.cnf
+mysql_server_my_cnf: server

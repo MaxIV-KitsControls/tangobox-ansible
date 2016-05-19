@@ -1,0 +1,5 @@
+[swfactory]
+name=MAX-lab RPM Packages - $basearch
+baseurl=http://{{ repo_server }}/packages/el$releasever/$basearch
+gpgcheck=0
+enabled=1

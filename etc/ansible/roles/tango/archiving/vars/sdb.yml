@@ -1,0 +1,4 @@
+---
+tango_archiving_script: "create-SNAPDB-InnoDB.sql"
+tango_archiving_class: "SnapArchiver"
+tango_archiving_database: "snap"

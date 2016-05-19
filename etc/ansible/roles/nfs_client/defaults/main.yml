@@ -1,0 +1,5 @@
+---
+
+nfs_mounted_directories: []
+nfs_default_owner: nfsnobody
+nfs_default_group: nfsnobody

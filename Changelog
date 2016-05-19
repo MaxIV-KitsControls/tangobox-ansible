@@ -1,0 +1,4 @@
+23-05-2014 Paul Bell
+	* Deploy fandango and PyAlarm to g-v0-ec-1 and fandango and PanicGui to all cc machines
+	* Edit packages within group and host variables
+	* Changes deployed at site on this date

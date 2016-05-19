@@ -1,0 +1,12 @@
+---
+java: oracle
+desktop: True
+
+packages:
+  libtango8: default
+
+accounts:
+  - name: controlroom
+    groups: 
+      - controlroom 
+    password: $6$rounds=40000$hFqlmHyRA212SdtD$jpcBgOwQaHsRxn3LDjXJ.bEfyE03U1ZeMnrmJIqz2mXRrqpXXPFyuwv/O0cx22INDiP4dguKsC0s8iGOMbluk1

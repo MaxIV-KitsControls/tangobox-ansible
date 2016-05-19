@@ -1,0 +1,8 @@
+---
+- name: Send input parameter
+  template: src=realm.expect dest=/tmp/realm.expect mode='u=rx,g=,o='
+
+- name: Join the realm
+  shell: /tmp/realm.expect
+  register: realm_join
+  changed_when: " {{ realm_join.stderr.find('realm: Already joined to this domain') != -1 }}"

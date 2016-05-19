@@ -1,0 +1,2 @@
+# set TANGO_HOST here for system-wide configuration
+TANGO_HOST={{tango_host}}

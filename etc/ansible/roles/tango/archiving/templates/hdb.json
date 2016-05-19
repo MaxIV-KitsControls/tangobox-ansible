@@ -1,0 +1,81 @@
+{
+    "servers": {
+{% for hdb_instance in range(1, hdb.number_of_instances + 1)  %}
+        "{{ hdb.server }}/{{ '%02d' % hdb_instance }}": {
+            "{{ hdb.clazz }}": {
+{% for increment in range(1, hdb.device_per_instance + 1) %}
+                "ARCHIVING/HDB/HDBARCHIVER-{{ '%02d' % hdb_instance }}-{{ '%02d' % increment }}": {
+                    "properties": {
+                        "DbPassword": "hdbarchiver",
+                        "dbPath": "/tmp/hdbarchiver/data/{{ '%02d' % hdb_instance }}/{{ '%02d' % increment }}",
+                        "DbUser": "hdbarchiver",
+                        "diaryLogLevel": "INFO",
+                        "diaryPath": "/tmp/hdbarchiver/diary/{{ '%02d' % hdb_instance }}/{{ '%02d' % increment }}",
+                        "dsPath": "/tmp/hdbarchiver/data/{{ '%02d' % hdb_instance }}/{{ '%02d' % increment }}",
+                        "hasDiary": "false",
+                        "HasThreadedStartup": "true",
+                        "isDedicated": "false",
+                        "reservedAttributes": ""
+                    }
+                }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+            }
+        },
+{% endfor %}
+        "ArchivingManager/1":{
+            "ArchivingManager":{
+                "ARCHIVING/ARCHIVINGMANAGER/ARCHIVINGMANAGER.1":{
+                    "properties":{
+                        "HdbPassword": "hdbmanager",
+                        "HdbUser": "hdbmanager",
+                        "TdbPassword": "tdbmanager",
+                        "TdbUser": "tdbmanager"
+                    }
+                }
+            }
+        },
+        "HdbArchivingWatcher/1":{
+            "HdbArchivingWatcher":{
+                "ARCHIVING/HDB/HDBARCHIVINGWATCHER.1":{
+                    "properties":{
+                       "defaultSafetyPeriod": "absolute/minutes/30",
+                       "diaryLogLevel": "DEBUG",
+                       "diaryPath": "/tmp/hdbarchivingwatcher/diary/1",
+                       "DoArchiverDiagnosis": "false",
+                       "doRetry": "true",
+                       "DoStartOnInitDevice": "true",
+                       "hasDiary": "false",
+                       "MacroPeriod": "5400",
+                       "MaxPacketSize": "100",
+                       "MinPacketSize": "10",
+                       "HdbPwd": "hdbmanager",
+                       "HdbUser": "hdbmanager"
+                    }
+                }
+            }
+        },
+        "HdbExtractor/1":{
+            "HdbExtractor":{
+                "ARCHIVING/HDB/HDBEXTRACTOR.1":{
+                    "properties":{
+                       "DbPassword": "hdbbrowser",
+                       "DbUser": "hdbbrowser"
+                    }
+                }
+            }
+        }
+    },
+    "classes": {
+        "{{ hdb.clazz }}":{
+            "properties":{
+                "DbCnxInactivityTimeout": "1800",
+                "DbHost": "{{ inventory_hostname }}",
+                "DbMaxPoolSize": "10",
+                "DbMinPoolSize": "2",
+                "DbName": "hdb",
+                "Facility": "false"
+            }
+        }
+    }
+}

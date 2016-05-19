@@ -1,0 +1,4 @@
+---
+- name: create icepap db
+  mysql_db: name=icepapcms target=/usr/share/icepapcms/db/creates-mysql.sql state=import
+

@@ -1,0 +1,5 @@
+---
+- name: Configure smtp relay server to enable email sending
+  lineinfile: dest=/etc/postfix/main.cf regexp="^relayhost" insertafter="^#relayhost" line="relayhost = {{ smtp_server }}"
+  notify:
+    - Restart Postfix

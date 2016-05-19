@@ -1,0 +1,12 @@
+---
+- name: Import archiving database schema
+  mysql_db: name={{ tango_archiving_database }} target=/usr/share/tango-archiving/sql/{{ tango_archiving_script }} state=import
+
+- name: Configure HDB Devices
+  shell: json2tango -o -d -v -w ~/.tango/hdb.json
+
+- name: Configure TDB Devices
+  shell: json2tango -o -d -v -w ~/.tango/tdb.json
+
+- name: Configure SDB Devices
+  shell: json2tango -o -d -v -w ~/.tango/sdb.json

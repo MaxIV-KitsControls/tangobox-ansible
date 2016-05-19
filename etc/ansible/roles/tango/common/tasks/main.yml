@@ -1,0 +1,23 @@
+---
+# This task set the file /etc/tangorc from the variable {{tango_host}}
+# Tango
+- name: ensure OpenJDK is present (needed for both client and server)
+  yum: pkg=java-1.7.0-openjdk state=latest
+
+- name: ensure the Tango Base packages are present
+  yum: pkg=tango-common state=latest
+  tags:
+    - TANGO_HOST
+
+- name: ensure the Tango dsconfig packages is present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - python-pytango
+    - python-dsconfig
+    
+- name: ensure Tango Host is correctly configured
+  template: src=tangorc dest=/etc/tangorc owner=root group=root mode=0644
+  tags:
+    - TANGO_HOST
+  notify:
+  - tango_host has changed

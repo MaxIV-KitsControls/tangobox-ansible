@@ -1,0 +1,18 @@
+- name: Flush the tables to avoid duplicated rules
+  shell: "iptables {{ item }}"
+  with_items:
+    - "-F"
+    - "-t nat -F"
+- name: Allow traffic on port 8443, 8080, 443 and 80
+  shell: "iptables -I INPUT 1 -p tcp --dport {{ item }} -j ACCEPT"
+  with_items:
+    - "8443"
+    - "8080"
+    - "443"
+    - "80"
+- name: Forward port 80 traffic to 8080
+  shell: "iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080"
+- name: Forward port 443 traffic to 8443
+  shell: "iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 8443"
+- name: Save the configuration
+  shell: "service iptables save"

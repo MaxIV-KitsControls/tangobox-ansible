@@ -1,0 +1,4 @@
+---
+tango_archiving_script: "create-HDB-InnoDB.sql"
+tango_archiving_class: "HdbArchiver"
+tango_archiving_database: "hdb"

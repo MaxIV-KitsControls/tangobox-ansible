@@ -1,0 +1,20 @@
+---
+#- copy: src={{ item }} dest=/tmp/{{ item }}
+#  with_items:
+#    - tango-matlab-R2013a-2.0.1-1.maxiv.x86_64.rpm
+
+- name: Install the tango binding
+  yum: name=tango-matlab-R2013a
+
+- name: Start matlab with the OS system libraries (via LD_PRELOAD)
+  lineinfile: dest=/etc/ld.so.preload line="{{ item }}" create=yes owner=root mode=0755
+  with_items:
+    - /lib64/libgcc_s.so.1
+    - /usr/lib64/libstdc++.so.6
+
+- name: Register the Tango toolbox to automatically load it at start up (1/2)
+  lineinfile: dest='/opt/matlab-R2013a/toolbox/local/pathdef.m' line="matlabroot,'/toolbox/tango/m-files:', ..." insertbefore='%%% END ENTRIES %%%'
+
+- name: Register the Tango toolbox to automatically load it at start up (1/2)
+  lineinfile: dest='/opt/matlab-R2013a/toolbox/local/pathdef.m' line="matlabroot,'/toolbox/tango/mex-file:', ..." insertbefore='%%% END ENTRIES %%%'
+

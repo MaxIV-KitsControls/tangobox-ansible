@@ -1,0 +1,13 @@
+DEVICE="eth1"
+BOOTPROTO="static"
+NM_CONTROLLED="no"
+BROADCAST="{{ ETH1_BROADCAST }}"
+HWADDR="{{ ETH1_HWADDR }}"
+IPADDR="{{ ETH1_IPADDR }}" 
+NETMASK="{{ ETH1_NETMASK }}"
+ONBOOT="yes"
+TYPE="Ethernet"
+IPV6INIT="no"
+USERCTL="no"
+MTU="{{ ETH1_MTU }}"
+{% if ETH1_DNS1 is defined %}DNS1="{{ ETH1_DNS1 }}" {% endif %}

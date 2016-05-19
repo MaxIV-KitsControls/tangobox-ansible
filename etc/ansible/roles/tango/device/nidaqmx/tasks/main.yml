@@ -1,0 +1,5 @@
+---  
+- name: Ensure the Tango DeviceServer is installed
+  yum: name={{ item }} state=present
+  with_items: 
+   - tangods-ni6602

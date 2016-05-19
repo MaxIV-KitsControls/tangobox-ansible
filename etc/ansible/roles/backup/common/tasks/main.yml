@@ -1,0 +1,15 @@
+---
+- name: Make sure the backup group exists
+  group: name={{ backup_user }}
+
+- name: Make sure the backup user exists
+  user: name={{ backup_user }} group={{ backup_user }} generate_ssh_key=yes shell=/bin/bash
+  #notify:
+  #- ssh_copy_id
+
+#- name: ensure {{ backup_user }} has sudo priviledges for rsync
+#  lineinfile: dest=/etc/sudoers state=present regexp="^{{ backup_user }}" line="{{ backup_user }}   ALL=(ALL)       /usr/bin/rsync"
+
+#- name: Disallow {{ backup_user }} SSH access
+#  lineinfile: dest=/etc/ssh/sshd_config regexp="^DenyUsers" line="DenyUsers {{ backup_user }}" state=present
+#  notify: restart sshd

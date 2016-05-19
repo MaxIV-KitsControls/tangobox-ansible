@@ -1,0 +1,42 @@
+---
+# SECURITY WISE
+- name: Disallow {{ backup_user }} SSH access
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^DenyUsers" line="DenyUsers {{ backup_user }}" state=present
+  notify: restart sshd
+
+# Basic temporary Backup installation
+- name: ensure the backup packages are present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - duplicity
+
+# SECURITY WISE
+- name: ensure {{ backup_user }} has sudo priviledges for rsync
+  lineinfile: dest=/etc/sudoers state=present regexp="^{{ backup_user }}" line="{{ backup_user }}   ALL=(ALL)       /usr/bin/duplicity"
+
+# SSH PREPARATION
+- shell: cat /home/{{ backup_user }}/.ssh/id_rsa.pub
+  register: public_backup
+  #ignore_errors: True
+
+- name: Add the Backup User to the Authorized Key of the backup_server
+  authorized_key: user={{ backup_user }} key="{{ public_backup.stdout }}"
+  delegate_to: "{{ backup_server }}"
+  notify: restart sshd of the backup server
+
+# Make the known_host
+- shell: ssh-keyscan {{ backup_server }}
+  ignore_errors: True
+  register: backup_server_host_key
+
+- name: Add backup server host key to known_hosts file
+  lineinfile: create=yes dest=/home/{{backup_user}}/.ssh/known_hosts line='{{ backup_server_host_key.stdout }}' state=present
+  sudo_user: "{{ backup_user }}"
+
+#- debug: msg='backup {{ private_backup.stdout }} {{ private_backup_ec.stdout }}'
+
+- name: ensure the backup is programmed
+  cron: name='Backup of the user logs' user={{ backup_user }} special_time=daily job='duplicity incremental  --name={{ inventory_hostname }} --no-encryption --ssh-options="-oProtocol=2" --include="/usr/local/elog/logbooks/" --exclude="**" /  ssh://{{backup_user}}@{{backup_server}}:22//var/backup/{{ inventory_hostname }}'
+  #cron: name='Backup of the user logs' user={{ backup_user }} special_time=daily job='duplicity incremental --name={{ inventory_hostname }} --no-encryption --ssh-options="-oProtocol=2 -oIdentityFile=/home/remy/.ssh/backup_rsa" --include="/var/backups/mongo" --include="/home/appuser/www/" --exclude="**" /  ssh://remy@trusted-backup-server.org:22/backups/uptime/'
+  #cron: name='Backup of the user logs' user={{ backup_user }} special_time=daily job='duplicity incremental --name={{ inventory_hostname }} --no-encryption --include="/usr/local/elog/logbooks/" --exclude="**" / file:///var/backup/{{ inventory_hostname }} '
+  notify: run full backup

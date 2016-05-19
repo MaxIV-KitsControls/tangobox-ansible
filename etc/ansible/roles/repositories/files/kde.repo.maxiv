@@ -1,0 +1,11 @@
+[kde]
+name=KDE RPM Packages - $basearch
+baseurl=http://srv-repo-0.maxiv.lu.se/kde-redhat/centos/6/$basearch/stable
+gpgcheck=0
+enabled=1
+
+[kde-testing]
+name=KDE RPM Testing Packages - $basearch
+baseurl=http://srv-repo-0.maxiv.lu.se/kde-redhat/centos/6/$basearch/testing
+gpgcheck=0
+enabled=1

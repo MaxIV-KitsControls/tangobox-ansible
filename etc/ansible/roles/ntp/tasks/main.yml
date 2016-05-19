@@ -1,0 +1,14 @@
+---
+# Basic installation
+- name: ensure the basic packages are present
+  yum: pkg=ntp state=latest
+
+# NTP configuration
+- name: ensure ntp is running
+  service: name=ntpd state=started enabled=yes
+
+- name: ensure NTP point out to the correct ntp server
+  template: src=ntp.conf dest=/etc/ntp.conf owner=root group=root mode=0644
+  when: ntp_server is defined
+  notify:
+  - restart ntpd 

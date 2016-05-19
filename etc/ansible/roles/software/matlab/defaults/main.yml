@@ -1,0 +1,3 @@
+---
+matlab_license_file: host_files/{{ inventory_hostname }}/matlab/license.lic
+matlab_license: True

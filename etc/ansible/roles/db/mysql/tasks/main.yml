@@ -1,0 +1,105 @@
+---
+# Since Redhat 7 define mariadb as a replacement of mysql this role adapt to the default database
+- name: set distro-specific variables
+  include_vars: mariadb.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+
+# Prepare the a separate volume if asked
+- name: Create a database lvm group
+  lvg: vg=database pvs=/dev/{{ mysql_disk }} pesize=32
+  when: mysql_disk is defined
+- name: Create a database lvm logical volume
+  lvol: vg=database lv=mysql size=100%FREE
+  when: mysql_disk is defined
+- name: The Mysql logical volume is using An XFS filesystem
+  filesystem: fstype=xfs dev=/dev/database/mysql
+  when: mysql_disk is defined
+- name: The logical volume is mounted to /var/lib/mysql
+  mount: name=/var/lib/mysql src=/dev/database/mysql fstype=xfs state=mounted
+  when: mysql_disk is defined
+ 
+
+- name: Install MySQL
+  action: yum name={{ item }}
+  with_items: mysql_packages
+
+# Prepare the system resources
+- name: Ensure enough resources for the mysql database
+  lineinfile: dest=/etc/security/limits.conf insertbefore="^# End of file" regexp="^mysql\s*hard\s*nofile" line="mysql    hard    nofile    10240" state=present
+  tags: 
+    - ulimit
+  notify:
+    - restart mysqld
+
+- name: Ensure enough resources for the mysql database
+  lineinfile: dest=/etc/security/limits.conf insertbefore="^# End of file" regexp="^mysql\s*soft\s*nofile" line="mysql    soft    nofile    10240" state=present
+  tags: 
+    - ulimit
+  notify:
+    - restart mysqld
+
+- file: path=/etc/systemd/system/{{ mysql_daemon }}.service.d state=directory mode=0755
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+
+- name: Change the limit of openfile in systemd (CENTOS7+)
+  template: src=limits.conf dest=/etc/systemd/system/{{ mysql_daemon }}.service.d/limits.conf 
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+  notify:
+    - reload systemd daemon
+    - restart mysqld
+
+# Set the server configuration
+- name: Ensure the server has the correct configuration /etc/my.cnf
+  ini_file: dest={{ mysql_etc_my_cnf }} section={{ mysql_server_my_cnf }} option={{ item.key }} value={{ item.value }} mode=0644
+  with_dict: mysql_server_settings | default({})
+  notify:
+    - restart mysqld
+
+
+- name: Start the MySQL service
+  action: service name={{ mysql_daemon }} state=started enabled=yes
+
+- name: delete anonymous MySQL users
+  action: mysql_user user="" host={{ item }} state="absent"
+  with_items:
+    - localhost 
+    - "{{ ansible_hostname }}"
+    - "{{ ansible_fqdn }}"
+
+- name: remove the MySQL test database
+  action: mysql_db db=test state=absent
+
+- name: Mysql | Check if the root password has been already set
+  stat: path=/root/.my.cnf
+  register: st 
+  when: mysql_root_password is not defined
+  tags: mysql_passd
+
+
+- name: Mysql | Generate a new root password
+  set_fact: 
+    mysql_root_password: "{{ lookup('password', '/tmp/'+ inventory_hostname +' length=6' ) }}"
+    #mysql_root_password: "root"
+  when: mysql_root_password is not defined and st.stat.exists == False
+  tags: mysql_passd
+
+
+# 'localhost' needs to be the last item for idempotency, see
+# http://ansible.cc/docs/modules.html#mysql-user
+- name: update mysql root password for all root accounts
+  mysql_user: name=root host={{ item }} password={{ mysql_root_password }}
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: mysql_root_password is defined
+  tags: mysql_passd
+
+- name: copy .my.cnf file with root password credentials
+  template: src=my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+  when: mysql_root_password is defined
+  notify:
+    - restart mysqld
+  tags: mysql_passd
+

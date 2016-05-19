@@ -1,0 +1,9 @@
+---
+- name: Ensure the old packages are uninstalled for this host
+  yum: name={{ item.1 }} update_cache=yes state=absent
+  with_indexed_items: "{{ obsoleted_packages }}"
+
+- name: Ensure the packages are correctly installed for this host
+  #yum: name={{ item.key }}-{{ item.value | default(versions['taurusgui-linacsynoptic']) }} update_cache=yes state=latest
+  yum: name={{ item.key }}-{{ item.value if item.value != 'default' else versions[item.key] }} update_cache=yes state=present
+  with_dict: "{{ packages }}"

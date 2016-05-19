@@ -1,0 +1,38 @@
+---
+# CLS connection
+- name: ensure the CLS packages are present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - sssd-tools
+    - sssd-client
+    - sssd
+    - openldap-clients
+    - nfs-utils
+    - zsh
+    - nss-pam-ldapd
+    - authconfig-gtk
+
+  
+- name: Force the authentication conf
+  command: /usr/sbin/authconfig --enableldap --enableldapauth --enableldaptls --ldapserver='ldap://{{ ldap_server }}/' --ldapbasedn='dc=maxlab,dc=lu,dc=se' --enableshadow --enablelocauthorize --disablecache --disablemd5 --disablenis  --disablefingerprint --disablekrb5 --disablewinbind --disablewinbindauth --updateall
+  
+- name: ensure the LDAP connection is working 
+  command: ldapsearch -x cn=KITS
+  
+- name: ensure tls doesn t require certification
+  ini_file: dest=/etc/sssd/sssd.conf section=domain/default option=ldap_tls_reqcert value=never
+  notify:
+  - restart sssd
+  
+- name: ensure the LDAP configuration with TLS
+  lineinfile: dest=/etc/openldap/ldap.conf state=present regexp='^TLS_REQCERT' line='TLS_REQCERT allow'
+  notify:
+  - restart sssd
+
+- meta: flush_handlers
+
+- name: test if the user comes from LDAP 
+  command: id vinhar
+  
+- name: ensure KITS group has sudo priviledges
+  lineinfile: dest=/etc/sudoers state=present regexp='^%KITS' line='%KITS   ALL=(ALL)       ALL'

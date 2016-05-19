@@ -1,0 +1,26 @@
+---
+pxe_hostname: pxe
+pxe:
+  ec:
+    packages:
+      - @development
+      - @emacs
+      - @fonts
+      - @internet-browser
+      - @network-file-system-client
+      - @x11
+      - PackageKit-gtk-module
+  cc:
+    packages:
+      - @development
+      - @emacs
+      - @fonts
+      - @internet-browser
+      - @network-file-system-client
+      - @x11
+      - PackageKit-gtk-module
+      # Special Desktop
+      - @desktop
+      - @general-desktop
+      - @graphical-admin-tools
+      - @office-suite

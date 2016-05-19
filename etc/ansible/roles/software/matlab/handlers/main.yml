@@ -1,0 +1,5 @@
+---
+- name: activate Matlab
+  shell: /opt/matlab-R2013a/bin/activate_matlab.sh -propertiesFile /var/matlab/activation.ini
+  when: matlab_license == True
+

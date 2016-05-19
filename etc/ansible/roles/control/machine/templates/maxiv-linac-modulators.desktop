@@ -1,0 +1,8 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=ssh {{ client_server }} ctModulators
+Name=MAXIV Linac Modulators
+Icon=gnome-panel-launcher

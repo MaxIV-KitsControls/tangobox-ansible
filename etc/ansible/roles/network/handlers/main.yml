@@ -1,0 +1,4 @@
+---
+- name: restart eth1
+  command: /sbin/ifdown eth1 
+  command: /sbin/ifup eth1 

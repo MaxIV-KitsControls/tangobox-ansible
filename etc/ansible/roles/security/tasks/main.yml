@@ -1,0 +1,10 @@
+---
+# This role won't allow ansible to use root anymore
+# You'd better call this task at the very end of your playbook
+# Call all the handlers before to be sure they can run
+- meta: flush_handlers
+
+# Things to desactivate for security reason
+- name: Disallow root SSH access
+  action: lineinfile dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
+  notify: restart sshd

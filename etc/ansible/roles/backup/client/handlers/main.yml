@@ -1,0 +1,15 @@
+---
+# Restart sshd to take account of the security constraints
+- name: restart sshd
+  service: name=sshd state=restarted
+
+# Restart sshd of the backup server to accept the new authorized key
+- name: restart sshd of the backup server
+  service: name=sshd state=restarted
+  delegate_to: "{{ backup_server }}"
+
+# Programmation of the backup
+- name: run full backup
+  sudo_user: '{{ backup_user }}'
+  shell: duplicity full --name={{ inventory_hostname }} --no-encryption --ssh-options="-oProtocol=2" --include="/usr/local/elog/logbooks/" --exclude="**" /  ssh://{{backup_user}}@{{backup_server}}:22//var/backup/{{ inventory_hostname }}
+  #command: duplicity full  --no-encryption --name={{ inventory_hostname }} --include="/usr/local/elog/logbooks/" --exclude="**" / file:///var/backup/{{ inventory_hostname }}

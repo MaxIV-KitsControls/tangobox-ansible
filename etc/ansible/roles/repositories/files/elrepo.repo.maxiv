@@ -1,0 +1,35 @@
+### Name: ELRepo.org Community Enterprise Linux Repository
+### URL: http://elrepo.org/
+
+[elrepo]
+name=ELRepo.org Community Enterprise Linux Repository - $releasever
+baseurl=http://srv-repo-0.maxiv.lu.se/elrepo/elrepo/el$releasever/$basearch/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+protect=0
+
+[elrepo-testing]
+name=ELRepo.org Community Enterprise Linux Testing Repository - $releasever
+baseurl=http://srv-repo-0.maxiv.lu.se/elrepo/testing/el$releasever/$basearch/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+protect=0
+
+[elrepo-kernel]
+name=ELRepo.org Community Enterprise Linux Kernel Repository - $releasever
+baseurl=http://srv-repo-0.maxiv.lu.se/elrepo/kernel/el$releasever/$basearch/
+#mirrorlist=http://elrepo.org/mirrors-elrepo-kernel.$releasever
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+protect=0
+
+[elrepo-extras]
+name=ELRepo.org Community Enterprise Linux Extras Repository - $releasever
+baseurl=http://srv-repo-0.maxiv.lu.se/elrepo/extras/el$releasever/$basearch/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+protect=0

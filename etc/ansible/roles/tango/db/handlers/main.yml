@@ -1,0 +1,20 @@
+---
+- name: backup tango db
+  mysql_db: name=tango state=dump target=/tmp/tangodb-{{ansible_date_time.epoch}}.sql
+
+- name: delete tango db
+  mysql_db: name=tango state=absent 
+
+- name: create tango db
+  # WORKAROUND: Will be able to import with the mysql_db module if the tango db script would check if the database exists before
+  #mysql_db: name=tango target=/usr/share/tango-db/create_db.sql state=import
+  shell: mysql < /usr/share/tango-db/create_db.sql
+
+- name: tango_host has changed
+  service: name=tango-db state=restarted
+  tags:
+    - TANGO_HOST
+
+- name: restart tango-db
+  service: name=tango-db state=restarted
+

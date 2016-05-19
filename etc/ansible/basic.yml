@@ -1,0 +1,18 @@
+---
+- hosts: all
+  sudo: yes
+  roles:
+  - { role: repositories, tags: [repo] }
+  - { role: hostname, tags: [hostname] }
+  - { role: ntp, when: ntp_server is defined, tags: [ntp] }
+  - { role: firewall, trusted_interface: "{{ ansible_default_ipv4.interface }}", tags: [firewall] }
+  - { role: users, when: accounts is defined, tags: [ users ] }
+  - { role: email, when: smtp_server is defined, tags: [ email ] }
+  - { role: desktop, when: desktop is defined and desktop == True, tags: [ desktop ] }
+  - { role: nvidia, when: nvidia is defined and nvidia == True, tags: [ nvidia ] }
+  - { role: network, when: ETH1_HWADDR is defined, tags: [ eth1 ] }
+  - { role: firewall, when: ETH1_HWADDR is defined, trusted_interface: "{{ ETH1 }}", tags: [firewall] }
+  - { role: software/java, when: java is defined and java=='oracle', tags: [ java ] }
+  - { role: vmware,  when: ansible_virtualization_role=="guest" and ansible_virtualization_type=="VMware" , tags: [ vmware ] }
+  - { role: cls, when: ldap_server is defined } 
+  - security

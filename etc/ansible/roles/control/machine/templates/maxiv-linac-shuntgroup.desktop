@@ -1,0 +1,8 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=ssh {{ client_server }} ctshuntgroups
+Name=MAXIV Linac Shunt Group
+Icon=gnome-panel-launcher

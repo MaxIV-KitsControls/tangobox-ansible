@@ -1,0 +1,78 @@
+---
+- hosts: tango-db
+  sudo: yes
+  roles:
+  - tango/common
+  - db/mysql
+  - tango/db
+
+- hosts: tango-server
+  sudo: yes
+  roles:
+  - tango/common
+  - tango/server
+  
+- hosts: tango-camera
+  sudo: yes
+  roles:
+  - camera/lima
+ 
+- hosts: tango-client
+  sudo: yes
+  roles:
+  - tango/common
+  - tango/client
+
+
+- hosts: icepap-db
+  sudo: yes
+  roles:
+  #- db/mysql
+  - icepap/db
+  tags: icepap
+
+- hosts: icepap-client
+  sudo: yes
+  roles:
+  - icepap/client
+  tags: icepap
+
+- hosts: elog
+  sudo: yes
+  roles:
+  - web/elog
+  tags: web
+
+- hosts: tango-archiving
+  sudo: yes
+  roles:
+  - tango/common
+  - tango/server
+  # This role is maybe not idempotent as it use sql script to generate db
+  # the archiving role is dependent on the mysql role
+  - tango/archiving
+  tags: archiving
+
+
+- hosts: nfs-server
+  sudo: yes
+  roles:
+  - nfs
+  tags: nfs
+
+- hosts: nfs-client
+  sudo: yes
+  roles:
+  - nfs_client
+  tags: nfs
+
+- hosts: cassandra-server
+  sudo: yes
+  roles:
+  - cassandra
+
+- hosts: gateway
+  sudo: yes
+  roles:
+  - tango_gateway
+

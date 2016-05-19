@@ -1,0 +1,4 @@
+---
+tango_hdb: True
+tango_sdb: True
+tango_adb: True

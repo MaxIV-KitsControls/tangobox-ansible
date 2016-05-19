@@ -1,0 +1,5 @@
+[swfactory]
+name=MAX-lab RPM Packages - $basearch
+baseurl=http://swfactory.maxlab.lu.se/packages/el6/$basearch
+gpgcheck=0
+enabled=1

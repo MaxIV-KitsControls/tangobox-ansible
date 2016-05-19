@@ -1,0 +1,64 @@
+timeout 100
+default menu.c32
+ 
+menu title ### KITS Equipment(EC) & Client(CC) Controller Boot Menu ###
+label 1
+   menu label ^1) Boot from local drive
+   localboot
+
+label 2
+   menu label ^2) Install CC CentOS 6 (x86_64, NO RAID, DESKTOP, TANGO)
+   kernel image/centos/6.4/x86_64/netinstall/vmlinuz
+   append initrd=image/centos/6.4/x86_64/netinstall/initrd.img devfs=nomount ks=http://repo.maxlab.lu.se/cgi-bin/kickstart.py?arch=x86_64&desktop=true&raid=false ksdevice=ksdevice=bootif
+   IPAPPEND 2
+
+label 3
+   menu label ^3) Install EC CentOS 6 (x86_64, RAID, NO DESKTOP, TANGO)
+   kernel image/centos/6.4/x86_64/netinstall/vmlinuz
+   append initrd=image/centos/6.4/x86_64/netinstall/initrd.img devfs=nomount ks=http://repo.maxlab.lu.se/cgi-bin/kickstart.py?arch=x86_64&desktop=false&raid=true ksdevice=ksdevice=bootif
+   IPAPPEND 2
+
+label 4
+   menu label ^4) Install Minimal EC CentOS 6 (x86_64, RAID, NO DESKTOP)
+   kernel image/centos/6.4/x86_64/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/x86_64/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/x86_64/ks/EC.ks ksdevice=ksdevice=bootif
+   IPAPPEND 2
+
+
+label 5
+   menu label ^5) Install Minimal CC CentOS 6 (x86_64, NO RAID, DESKTOP)
+   kernel image/centos/6.4/x86_64/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/x86_64/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/x86_64/ks/CC.ks ksdevice=ksdevice=bootif
+   IPAPPEND 2
+
+
+label 6
+   menu label ^6) Install Minimal EC CentOS 6 (i386, RAID, NO DESKTOP)
+   kernel image/centos/6.4/i386/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/i386/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/i386/ks/EC.ks ksdevice=ksdevice=bootif
+   IPAPPEND 2
+
+
+label 7
+   menu label ^7) Install Minimal CC CentOS 6 (i386, NO RAID, DESKTOP)
+   kernel image/centos/6.4/i386/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/i386/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/i386/ks/CC.ks ksdevice=ksdevice=bootif
+   IPAPPEND 2
+
+label 8
+   menu label ^8) Install Minimal CC CentOS 6 (x86_64, NO RAID, DESKTOP)
+   kernel image/centos/6.4/x86_64/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/x86_64/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/x86_64/ks/CC.ks ksdevice=ksdevice=bootif pci=nomsi nolapic noapic
+   IPAPPEND 2
+
+label 9
+   menu label ^9) VirtualBox: Install  CC CentOS 6 (x86_64, NO RAID, DESKTOP)
+   kernel image/centos/6.4/x86_64/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/x86_64/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/x86_64/ks/CC.ks ksdevice=bootif pci=nomsi nolapic noapic
+   IPAPPEND 2
+
+label 10 
+   menu label ^10) VirtualBox: Install  CC CentOS 6 (i386, NO RAID, DESKTOP)
+   kernel image/centos/6.4/i386/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.4/i386/bin-DVD1/initrd.img devfs=nomount ks=http://192.168.150.10/centos/6.4/i386/ks/CC.ks ksdevice=bootif pci=nomsi nolapic noapic
+   IPAPPEND 2

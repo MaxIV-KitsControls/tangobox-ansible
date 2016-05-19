@@ -1,0 +1,4 @@
+---
+tango_archiving_script: "create-TDB-InnoDB.sql"
+tango_archiving_class: "TdbArchiver"
+tango_archiving_database: "tdb"

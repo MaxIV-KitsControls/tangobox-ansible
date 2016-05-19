@@ -1,0 +1,13 @@
+---
+- name: ensure that db user is configured
+  mysql_user: name=hdbarchiver password=hdbarchiver priv="hdb.*:ALL" state=present
+  mysql_user: name=hdbarchiver host=% password=hdbarchiver priv="hdb.*:ALL" state=present
+  tags:
+    - RT5669
+
+- name: Create the dsconfig file
+  template: src=hdb.json dest=~/.tango/hdb.json
+  notify:
+    - Configure HDB Devices
+  tags:
+    - hdb_device_config

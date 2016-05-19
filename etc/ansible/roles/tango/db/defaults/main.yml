@@ -1,0 +1,4 @@
+---
+tango_mysql_user: tango
+tango_mysql_password: tango
+mysql_daemon: mysqld

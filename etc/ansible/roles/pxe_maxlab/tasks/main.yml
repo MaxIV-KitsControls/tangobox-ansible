@@ -1,0 +1,104 @@
+---        
+# PXE Boot Installater installation
+- name: ensure the basic packages are present
+  yum: pkg=$item state=latest
+  with_items:
+    - dhcp
+    - httpd
+    - tftp
+    - syslinux
+
+# Ensure services are started at start up
+- name: ensure services are started at start up
+  service: name={{ item }} enabled=true state=started
+  with_items:
+    - dhcpd
+    - iptables
+    - xinetd
+  tags:
+    - service
+
+# DHCP configuration
+- name: ensure the DHCP server is correctly configured
+  copy: src=dhcpd.conf dest=/etc/dhcp/dhcpd.conf owner=root group=root mode=0644
+  
+# sysctl configuration
+- name: ensure sysctl enable ip forwarding
+  lineinfile: dest=/etc/sysctl.conf state=present regexp='^net.ipv4.ip_forward' line='net.ipv4.ip_forward = 1'
+  notify:
+  - update sysctl
+
+# Nat configuration (to be able to access the original kickstarter file)
+- name: Create the iptables file
+  copy: src=iptables dest=/etc/sysconfig/iptables  owner=root group=root mode=0600
+  notify: restart iptables
+  
+# HTTPd (for Local installation)
+- name: Create images directory to publish with httpd
+  file: path=/var/www/html/{{ item[0] }}/{{ item[1] }}/{{ item[2] }}/{{ item[3] }} state=directory
+  with_nested:
+    - [ 'centos' ]
+    - [ '6.4' ]
+    - [ 'x86_64', 'i386' ]
+    - [ 'iso', 'img', 'ks' ]
+            
+# Download the iso to mount locally
+- name: Download the CentOS ISO
+  # Here the name of centos is not coherent between the directory and the file name
+  get_url: url=http://mirrors.se.kernel.org/{{ item[0] }}/{{ item[1] }}/isos/{{ item[2] }}/CentOS-{{ item[1] }}-{{ item[2] }}-{{ item[3] }}.iso dest=/var/www/html/{{ item[0] }}/{{ item[1] }}/{{ item[2] }}/iso
+  with_nested:
+    - ['centos']
+    - ['6']
+    - ['x86_64', 'i386']
+    - ['bin-DVD1', 'netinstall']
+
+# Mount the CentOS image
+- name: Mount CentOS image
+  mount: src=/var/www/html/{{item[0]}}/{{item[1]}}/{{item[2]}}/iso/CentOS-{{item[1]}}-{{item[2]}}-{{item[3]}}.iso name=/var/www/html/{{item[0]}}/{{item[1]}}/{{item[2]}}/img/{{item[3]}} opts=ro,loop fstype=iso9660 state=mounted
+  with_nested:
+    - ['centos']
+    - ['6']
+    - ['x86_64', 'i386']
+    - ['bin-DVD1', 'netinstall']
+
+# Transfert the Kickstarter file for the minimal installation
+- name: Copy Kickstarter file for the minimal installation
+  copy: src=ks/{{item.file}} dest=/var/www/html/{{item.os}}/{{item.version}}/{{item.arch}}/ks
+  with_items:
+    - { file: 'CC-centos-6-x86_64.ks', os: 'centos', version: '6.4', arch: 'x86_64'}
+    - { file: 'EC-centos-6-x86_64.ks', os: 'centos', version: '6.4', arch: 'x86_64'}
+
+#TFTP
+#####
+# PXE Menu
+- name: Ensure the TFTP directory exists
+  file: path=/var/lib/tftpboot/pxelinux.cfg state=directory owner=root mode=0755
+  
+- name: Ensure the TFTP has the correct pxe boot kernel
+  command: cp /usr/share/syslinux/{{item}} /var/lib/tftpboot
+  with_items:
+    - chain.c32
+    - mboot.c32
+    - memdisk
+    - menu.c32
+    - pxelinux.0
+    
+- name: Configure the TFTP menu
+  template: src=pxelinux.cfg/default dest=/var/lib/tftpboot/pxelinux.cfg
+  
+- name: Create the directories to store the install kernel
+  file: path=/var/lib/tftpboot/image/{{item[0]}}/{{item[1]}}/{{item[2]}}/{{item[3]}} state=directory
+  with_nested:
+    - ['centos']
+    - ['6']
+    - ['x86_64', 'i386']
+    - ['bin-DVD1', 'netinstall']
+ 
+# Provide the kernel for installation
+- name: Populate the install kernel
+  shell: cp /var/www/html/{{item[0]}}/{{item[1]}}/{{item[2]}}/img/{{item[3]}}/isolinux/* /var/lib/tftpboot/image/{{item[0]}}/{{item[1]}}/{{item[2]}}/{{item[3]}}
+  with_nested:
+    - ['centos']
+    - ['6']
+    - ['x86_64', 'i386']
+    - ['bin-DVD1', 'netinstall']

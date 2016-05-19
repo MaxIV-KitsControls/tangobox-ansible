@@ -1,0 +1,35 @@
+---
+
+- name: Install cassandra package
+  yum: name=cassandra22.noarch update_cache=yes state=present
+
+- name : Create log directory
+  file: dest=/var/log/cassandra state=directory owner=cassandra group=MAX-Lab
+
+- name : Create lib directory
+  file: dest=/var/lib/cassandra state=directory owner=cassandra group=MAX-Lab
+
+- name : Create pid directory
+  file: dest=/var/run/cassandra state=directory owner=cassandra group=MAX-Lab
+
+- name: Deploy cassandra network configuration file and remove localhost setup
+  copy: src=cassandra.yaml dest=/etc/cassandra/conf/ force=yes
+
+- name: Start cassandra
+  service:  name=cassandra state=started
+
+- name: Create sql script cassandra directory
+  file: dest=/tmp/create_cassandra state=directory
+
+- name: Deploy create hdb cassandra
+  copy: src=create_hdb_cassandra.sql dest=/tmp/create_cassandra/
+
+- name: Check if cassandra hdb database exist
+  register: command_result
+  action : shell echo "use hdb;" | cqlsh {{ inventory_hostname }}
+
+- name: Setup cassandra hdb database
+  ignore_errors: True
+  action: shell cqlsh {{ inventory_hostname }}  < /tmp/create_cassandra/create_hdb_cassandra.sql
+  when: "'InvalidRequest' in command_result.stderr"
+

@@ -1,0 +1,15 @@
+---
+# Lima
+- name: ensure the Lima packages are present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - lima-{{ camera_driver }} 
+    - python-pytango
+    - tangods-limaccds
+
+# Set up network interface eth1 for basler cameras
+# (we need this for other stuff like ion pumps so perhaps it should be generalized?)
+- name: set up network interface eth1
+  when: camera_driver == "basler"
+  template: src=ifcfg-eth1 dest=/etc/sysconfig/network-scripts/ owner=root group=root mode=644
+  notify: restart eth1

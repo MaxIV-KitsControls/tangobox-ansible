@@ -1,0 +1,22 @@
+timeout 100
+default menu.c32
+ 
+menu title ### KITS Equipment(EC) & Client(CC) Controller Boot Menu ###
+label 1
+   menu label ^1) Boot from local drive
+   localboot
+
+label 2
+   menu label ^2) Virtual Machine: Install CentOS 6.5 (x86_64, NO RAID, MINIMAL)
+   kernel image/centos/6.5/x86_64/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.5/x86_64/bin-DVD1/initrd.img devfs=nomount ks=http://{{ pxe_hostname }}/centos/6.5/x86_64/ks/EC-centos-6.5-x86_64.ks ksdevice=bootif pci=nomsi nolapic noapic
+   IPAPPEND 2
+
+
+label 4
+   menu label ^4) Physical Machine: Install CentOS 6.5 (x86_64, NO RAID, MINIMAL)
+   kernel image/centos/6.5/x86_64/bin-DVD1/vmlinuz
+   append initrd=image/centos/6.5/x86_64/bin-DVD1/initrd.img devfs=nomount ks=http://{{ pxe_hostname }}/centos/6.5/x86_64/ks/EC-centos-6.5-x86_64.ks ksdevice=bootif
+   IPAPPEND 2
+
+

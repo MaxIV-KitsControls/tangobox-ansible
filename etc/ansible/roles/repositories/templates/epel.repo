@@ -1,0 +1,6 @@
+[epel]
+name=EPEL RPM Packages - $basearch
+baseurl=http://{{ repo_server }}/fedora-epel/$releasever/$basearch
+exclude=omniORB*
+gpgcheck=0
+enabled=1

@@ -1,0 +1,10 @@
+---
+# Re export the nfs config (debian like machine)
+#- name: reload nfs-kernel-server
+#  service: name=nfs-kernel-server state=reloaded
+#  delegate_to: "{{ nfs_server }}"
+
+# Re export the nfs config (debian like machine)
+- name: export nfs exports
+  command: /usr/sbin/exportfs -r
+  delegate_to: "{{ nfs_server }}"

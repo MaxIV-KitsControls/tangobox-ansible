@@ -1,0 +1,5 @@
+---
+- name: tango_host has changed
+  service: name=tango-starter state=restarted
+- name: restart tango-starter
+  service: name=tango-starter state=restarted

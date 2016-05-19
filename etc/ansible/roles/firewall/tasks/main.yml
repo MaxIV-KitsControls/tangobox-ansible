@@ -1,0 +1,21 @@
+---
+- name: Disable firewall on CENTOS 6
+  service: name=iptables state=stopped enabled=false
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+- name: Disable firewall on CENTOS 7
+  service: name=firewalld state=stopped enabled=false
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+# On CentOS 7, rather than disabling the firewall, add the control system
+# network interface (usually the first one) to the "trusted" firewall zone.
+# CentOS 7 uses BIOS device names for network interfaces. The name of the
+# first inteface will vary depending on the hardware. Use the variable
+# eth0_name to specify the device name.
+#
+# This task does not seems to works
+#- name: Machine | Add main network interface to the trusted zone
+## firewalld: source='192.168.1.0/24' zone=trusted state=enabled
+#  #command: /usr/bin/firewall-cmd --permanent --zone=trusted --change-interface={{ ansible_default_ipv4.interface }}
+#  command: /usr/bin/firewall-cmd --permanent --zone=trusted --change-interface={{ trusted_interface }}
+#  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+

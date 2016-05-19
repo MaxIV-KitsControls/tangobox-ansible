@@ -1,0 +1,46 @@
+---
+# Since Redhat 7 define mariadb as a replacement of mysql this role adapt to the default database
+- name: set distro-specific variables
+  include_vars: mariadb.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+
+     
+# This task set the file /etc/tangorc from the variable {{tango_host}}
+# Tango
+- name: ensure the Tango Database packages are present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - tango-accesscontrol
+    - tango-admin
+    - tango-db
+  
+  # Setup of MySQL DB (fixme - only needed for some servers)
+- name: ensure that mysqld is running
+  service: name={{ mysql_daemon }} state=started
+
+# This doesn't work at this moment
+#- name: ensure tango db exists
+#  mysql_db: name=tango target=/usr/share/tango-db/create_db.sql state=import
+#  tags:
+#    - mysql
+
+
+# Setup of MySQL DB (fixme - only needed for some servers) 
+- name: ensure tango db exists
+  mysql_db: name=tango state=present
+  notify:
+    - backup tango db
+    - delete tango db
+    - create tango db
+
+# Additionnaly the tango password is only accessible with sudo
+- name: ensure that db user is configured in mysql
+  mysql_user: name={{ tango_mysql_user }} password={{ tango_mysql_password }} priv="tango.*:ALL" state=present
+  mysql_user: name={{ tango_mysql_user }} host=% password={{ tango_mysql_password }} priv="tango.*:ALL" state=present
+
+- name: ensure the Tango Database to start with the good mysql credential
+  template: src=tango-db dest=/etc/sysconfig/tango-db owner=root group=root mode=0600
+
+- name: ensure that tangodb is running
+  service: name=tango-db state=started
+

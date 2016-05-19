@@ -1,0 +1,25 @@
+#!/usr/bin/expect
+
+spawn /bin/sh /mnt/nidaqmx/INSTALL
+expect "Continue?" { send "Y\n" }
+
+expect {
+    
+    "Do you accept the license?" {
+        send "y\n"
+    }
+    -ex "--More--" {
+        send "\n" ;
+        exp_continue ;
+    }
+}
+expect "Manually specify a location for LabVIEW 8.0 support files?" { send "N\n" }
+expect "Manually specify a location for LabVIEW 8.2 support files?" { send "N\n" }
+expect "Manually specify a location for LabVIEW 8.5 support files?" { send "N\n" }
+expect "Manually specify a location for LabVIEW 8.6 support files?" { send "N\n" }
+expect "Would you like to continue?" { send "Y\n" }
+expect "Would you like to reboot now?" { send "yes\n" }
+#expect "Continue?" { send "Y\n" }
+#expect "Continue?" { send "Y\n" }
+#expect "Continue?" { send "Y\n" }
+#interact

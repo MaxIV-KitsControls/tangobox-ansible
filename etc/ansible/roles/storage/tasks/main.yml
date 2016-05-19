@@ -1,0 +1,6 @@
+---
+# Storage Server configuration
+- name: ensure the computer has access to the NFS server
+  lineinfile: "dest=/etc/exports insertafter='^/mxn/home/\t\t' line='\x09\x09\x09{{ inventory_hostname }}.maxlab.lu.se(rw,subtree_check)\\' regexp='.*{{ inventory_hostname }}.*\\\\' backup=yes"
+  delegate_to: ${nfs_server}
+

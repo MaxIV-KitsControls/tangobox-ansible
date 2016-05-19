@@ -1,0 +1,31 @@
+---
+# This task set the file /etc/tangorc from the variable {{tango_host}}
+# Tango
+- name: ensure the Tango Device Servers packages are present
+  yum: pkg={{ item }} state=present
+  with_items:
+    - tango-starter  
+    - tango-test  
+    - sardana
+    - python-sardana-ctrl
+
+- name: Ensure enough resources for the tango device server to open connection with the client
+  lineinfile: 
+     dest: /etc/security/limits.conf
+     insertbefore: '^# End of file'
+     regexp: '{{ item.regex }}'
+     line: '{{ item.line }}'
+     state: present
+  with_items:
+    - { regex: "^tangosys\\s*soft\\s*nproc", line: "tangosys    soft    nproc     4096" }
+    - { regex: "^tangosys\\s*hard\\s*nofile", line: "tangosys    hard    nofile    10240" }
+    - { regex: "^tangosys\\s*soft\\s*nofile", line: "tangosys    soft    nofile    10240" }
+  tags: 
+    - ulimit
+  notify:
+    - restart tango-starter
+
+- name: ensure the tango starter service is running
+  service: name="tango-starter" enabled=yes state=started
+  tags:
+    - debug

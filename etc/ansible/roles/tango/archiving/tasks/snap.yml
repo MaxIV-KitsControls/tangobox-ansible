@@ -1,0 +1,43 @@
+---
+- name: ensure that db user is configured
+  mysql_user: name=snaparchiver password=snaparchiver priv="snap.*:ALL" state=present
+  mysql_user: name=snaparchiver host=% password=snaparchiver priv="snap.*:ALL" state=present
+  tags:
+    - RT5669
+
+- name: Create the dsconfig file
+  template: src=snap.json dest=~/.tango/sdb.json
+  notify:
+    - Configure SDB Devices
+
+- name: Check if the ICSE-ME-LE file exists
+  stat: path=/usr/share/tango-archiving/config/snap/{{ snap.xml_file }}
+  register: snap_file
+
+- name: Copy the ICSE-ME-LE file if it does not exist
+  command: cp /usr/share/tango-archiving/config/snap/beansBeamlineSrv1.xml /usr/share/tango-archiving/config/snap/{{ snap.xml_file }}
+  when: not snap_file.stat.exists
+
+- name: Configure the ICSE-ME-LE file
+  lineinfile: 
+    dest: '/usr/share/tango-archiving/config/snap/{{ snap.xml_file }}'
+    regexp: '^(.*)srv1(.*)$'
+    line: '\1{{ ansible_hostname }}\2'
+    state: present
+    backrefs: yes
+    backup: yes
+
+- name: Fix the mysql timeout issues
+  lineinfile: 
+    dest: '/usr/share/tango-archiving/config/snap/{{ snap.xml_file }}'
+    insertafter: '^.*{{ ansible_hostname }}.*$'
+    line: '{{ item }}'
+    state: present
+    backup: yes
+  with_items:
+    - '                    <property name="validationQuery" value="SELECT 1" />'
+    - '                    <property name="testOnBorrow" value="true" />'
+    - '                    <property name="removeAbandoned" value="true" />'
+    - '                    <property name="removeAbandonedTimeout" value="300" />'
+  tags:
+    - RT5669

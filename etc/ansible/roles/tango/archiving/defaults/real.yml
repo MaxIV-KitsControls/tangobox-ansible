@@ -1,0 +1,12 @@
+---
+tdb:
+  server: "TdbArchiver"
+  clazz: "TdbArchiver"
+  instances:
+    - "01"
+    - "02"
+    - "03"
+    - "04"
+    - "05"
+  device_per_instance: 5
+  host: "{{ groups['tango-tdb'] }}"

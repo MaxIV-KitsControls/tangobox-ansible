@@ -1,0 +1,2 @@
+fileInstallationKey={{ matlab_installation_key }}
+activationPropertiesFile=/var/matlab/activation.ini

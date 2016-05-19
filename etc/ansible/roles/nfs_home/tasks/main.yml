@@ -1,0 +1,45 @@
+---
+- name: What is ansible_version?
+  debug: var=ansible_version
+- fail: msg="You'll need ansible > 1.9.4 to register correctly the NFS export, current {{ ansible_version }}"
+  when: "{{ ansible_version.full|version_compare('1.9.4', '<') }}"
+
+# This role manage the settings of the network home directory
+- name: ensure the CLS packages are present
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - nfs-utils
+  tags:
+    - client
+
+# NFS Server configuration using /etc/exports.d/{{nfs_exports}}.exports
+- name: ensure that the {{nfs_exports}}.exports file exists on the NFS server
+  when: nfs_exports is defined
+  copy: src=exports dest=/etc/exports.d/{{nfs_exports}}.exports force=no
+  delegate_to: "{{ nfs_server }}"
+
+- name: ensure the computer has access to the NFS server
+  when: nfs_exports is defined
+  lineinfile: 
+    dest: /etc/exports.d/{{nfs_exports}}.exports
+    line: ' 		{{ ansible_default_ipv4.address }}(rw,no_subtree_check)\\'
+    regexp: '{{ ansible_default_ipv4.address }}.*'
+    backup: yes
+  delegate_to: "{{ nfs_server }}"
+  notify:
+    - export nfs exports 
+
+# Force the reload of the nfs server if necessary
+- meta: flush_handlers
+
+- name: ensure the NFSv4 domain is correct
+  ini_file: dest=/etc/idmapd.conf section=General option=Domain value=maxlab.lu.se
+  tags:
+    - client
+
+- name: ensure the home dir is mounted
+  mount: name=/mxn/home src={{ nfs_server }}:/mxn/home fstype=nfs opts='defaults,nosuid' state=mounted
+  tags:
+    - client
+
+

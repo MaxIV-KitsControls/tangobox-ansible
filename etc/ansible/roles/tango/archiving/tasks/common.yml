@@ -1,0 +1,21 @@
+---
+# Tango Archiving system
+- include_vars: "{{ tango_archiver }}.yml"
+
+- name: make sure the Tango archiving packages are installed and up to date
+  yum: pkg=tango-archiving state=latest
+
+# Call by dependency
+#- name: ensure that mysqld is running and enabled after reboot
+#  service: name=mysqld state=started enabled=yes
+
+- name: Archiving | Common | Create Database
+  mysql_db: name={{ tango_archiving_database }} state=present
+  notify: Import archiving database schema
+
+- name: Archiving | Common | Create DS config directory
+  file: name=~/.tango state=directory
+  tags: 
+    - adb_device_config
+
+- meta: flush_handlers

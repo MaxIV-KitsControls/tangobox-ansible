@@ -1,0 +1,5 @@
+[tango]
+name=Tango RPM Packages - $basearch
+baseurl={{ tango_rpm_server }}/el$releasever/$basearch
+gpgcheck=0
+enabled=1

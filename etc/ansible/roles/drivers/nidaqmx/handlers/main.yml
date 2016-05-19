@@ -1,0 +1,15 @@
+---
+- name: NIDAQMX Installation | send input parameter
+  template: src=expect dest=/tmp/expect mode=u+rwx
+
+- name: NIDAQMX Installation | install kernel drivers and reboot
+  shell: /tmp/expect
+
+- name: Wait for server to restart
+  wait_for:
+      host={{ inventory_hostname }}
+      port=22
+      delay=1
+      timeout=300
+  sudo: false
+  delegate_to: localhost

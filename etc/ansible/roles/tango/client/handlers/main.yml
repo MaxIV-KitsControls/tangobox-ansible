@@ -1,0 +1,3 @@
+---
+- name: tango_host has changed
+  command: echo "Nothing to do"
