@@ -3,13 +3,14 @@
   group: name={{ item.1 }}
   #with_items: users
   with_subelements:
-     - accounts
+     - "{{ accounts }}"
      - groups
   when: accounts is defined
- 
-- name: Make sure the user exists 
-  user: name={{ item.name }} shell=/bin/zsh groups={{ item.groups|join(',') }} generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa password={{ item.password }}
-  with_items: accounts
+
+- name: Make sure the user exists
+  # user: name={{ item.name }} shell=/bin/zsh groups={{ item.groups|join(',') }} generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa password={{ item.password }}
+  user: name={{ item.name }} shell={{ item.shell if 'shell' in item else "/bin/zsh" }} groups={{ item.groups|join(',') }} generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa password={{ item.password }}
+  with_items: "{{ accounts }}"
   notify:
     - restart sshd
 

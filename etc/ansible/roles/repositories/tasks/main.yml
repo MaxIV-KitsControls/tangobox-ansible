@@ -1,19 +1,19 @@
 ---
 # Basic installation
 
-  
+
 # SPECIAL MAXIV
 - name: ensure CentOS-Base Repository is configured for the MAXIV domain
   template: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
-  when: domain=='maxiv.lu.se'
+  when: domain=='cps.uj.edu.pl'
 
 - name: ensure EPEL Repository is configured for the MAXIV domain
   template: src=epel.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root mode=0644
-  when: domain=='maxiv.lu.se'
+  when: domain=='cps.uj.edu.pl'
 
 - name: configure el repo
   copy: src=elrepo.repo.maxiv dest=/etc/yum.repos.d/elrepo.repo owner=root group=root mode=0644
-  when: domain=='maxiv.lu.se' and ansible_distribution == "CentOS"
+  when: domain=='cps.uj.edu.pl' and ansible_distribution == "CentOS"
 
 - name: copy EL rpm-gpg repo key
   copy: src=RPM-GPG-KEY-elrepo.org dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org owner=root group=root mode=0444
@@ -21,12 +21,21 @@
 
 - name: configure KDE repo
   copy: src=kde.repo.maxiv dest=/etc/yum.repos.d/kde.repo owner=root group=root mode=0644
-  when: domain=='maxiv.lu.se' and ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+  when: domain=='cps.uj.edu.pl' and ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
 #/SPECIAL MAXIV
 
-- name: ensure the epel package are present
-  yum: pkg=epel-release state=latest
+#- name: ensure the epel package are present
+#  yum: pkg=epel-release state=latest
 
+- name: Install EPEL repo.
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+    state: present
+
+- name: Import EPEL GPG key.
+  rpm_key:
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+    state: present
 
 # Public network configuration (for the TangoBox)
 - name: ensure the Public Tango Yum repo is installed
@@ -34,7 +43,7 @@
   when: network=='public'
 
 - name: Check if the pxe repo exists
-  stat: path=/etc/yum.repos.d/cobbler-config.repo 
+  stat: path=/etc/yum.repos.d/cobbler-config.repo
   register: st
   when: network=='public'
 
@@ -47,13 +56,13 @@
 # MAX IV Internal repository
 - name: ensure the MaxLab Software Factory Yum repo is installed
   template: src=swfactory.repo dest=/etc/yum.repos.d/swfactory.repo owner=root group=root mode=0644
-  when: domain=='maxlab.lu.se' or domain=='maxiv.lu.se'
-  
+  when: domain=='maxlab.lu.se' or domain=='cps.uj.edu.pl'
+
 - name: ensure the old MaxLab Yum repo is removed
   file: path=/etc/yum.repos.d/maxlab.repo state=absent
-  when: domain=='maxlab.lu.se' or domain=='maxiv.lu.se'
+  when: domain=='maxlab.lu.se' or domain=='cps.uj.edu.pl'
 
 - name: ensure the old Maxlab configuration is absent
   yum: pkg=maxlab-release state=absent
-  when: domain=='maxlab.lu.se' or domain=='maxiv.lu.se'
+  when: domain=='maxlab.lu.se' or domain=='cps.uj.edu.pl'
 #

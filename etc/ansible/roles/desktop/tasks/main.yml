@@ -3,10 +3,13 @@
   yum: name="@GNOME Desktop" state=present
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6
 
-- name: Install the Desktop packages 
-  yum: name="@^gnome-desktop-environment" state=present 
+- name: Install the Desktop packages
+  yum: name="@^gnome-desktop-environment" state=present enablerepo=epel
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
 
+- name: Install the Mate Desktop packages
+  yum: name="@^mate-desktop-environment" state=present enablerepo=epel
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7 and mate_desktop is defined
 
 - name: Install the Desktop Extension packages
   yum: name="{{ item }}" state=present disablerepo=elrepo
@@ -42,6 +45,5 @@
   changed_when: false
 
 - name: Make sure the OS start with the desktop
-  command: systemctl set-default graphical.target 
+  command: systemctl set-default graphical.target
   when: st.stdout != "graphical.target" and ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
-
