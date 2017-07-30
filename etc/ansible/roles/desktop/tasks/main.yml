@@ -4,11 +4,11 @@
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6
 
 - name: Install the Desktop packages
-  yum: name="@^gnome-desktop-environment" state=present enablerepo=epel
+  yum: name="@^gnome-desktop-environment" state=present
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
 
 - name: Install the Mate Desktop packages
-  yum: name="@^mate-desktop-environment" state=present enablerepo=epel
+  yum: name="@^gnome-desktop-environment" state=present 
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7 and mate_desktop is defined
 
 - name: Install the Desktop Extension packages
