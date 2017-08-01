@@ -36,8 +36,12 @@
 #/SPECIAL MAXIV
 
 - name: ensure the epel package are present
-  yum: pkg=epel-release state=latest
+  yum: pkg=epel-release state=latest update_cache=yes
+  when: ansible_os_family == "RedHat"
 
+- name: ensure the zsh shell package are present
+  yum: pkg=zsh state=present
+  when: ansible_os_family == "RedHat"
 
 # Public network configuration (for the TangoBox)
 - name: ensure the Public Tango Yum repo is installed

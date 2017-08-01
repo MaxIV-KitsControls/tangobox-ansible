@@ -1,14 +1,14 @@
 ---
-- name: Install the Desktop packages
+- name: Install the GNOME Desktop packages
   yum: name="@GNOME Desktop" state=present
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6
 
-- name: Install the Desktop packages
+- name: Install the Gnome Desktop environment packages
   yum: name="@^gnome-desktop-environment" state=present
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
 
-- name: Install the Mate Desktop packages
-  yum: name="@^gnome-desktop-environment" state=present 
+- name: Install the Mate Desktop environment packages
+  yum: name="@^gnome-desktop-environment" state=present
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7 and mate_desktop is defined
 
 - name: Install the Desktop Extension packages

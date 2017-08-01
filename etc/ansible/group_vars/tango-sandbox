@@ -11,8 +11,8 @@ accounts:
       - controlroom
     #password: maxiv
     password: $6$rounds=40000$hFqlmHyRA212SdtD$jpcBgOwQaHsRxn3LDjXJ.bEfyE03U1ZeMnrmJIqz2mXRrqpXXPFyuwv/O0cx22INDiP4dguKsC0s8iGOMbluk1
-  - name: Operator
-    groups:
-      - controlroom
-    #password: tylko!2#dlanas
-    password: $6$rounds=40000$hFqlmHyRA212SdtD$jpcBgOwQaHsRxn3LDjXJ.bEfyE03U1ZeMnrmJIqz2mXRrqpXXPFyuwv/O0cx22INDiP4dguKsC0s8iGOMbluk1
+  # - name: Operator
+  #   groups:
+  #     - controlroom
+  #   #password: tylko!2#dlanas
+  #   password: $6$rounds=40000$hFqlmHyRA212SdtD$jpcBgOwQaHsRxn3LDjXJ.bEfyE03U1ZeMnrmJIqz2mXRrqpXXPFyuwv/O0cx22INDiP4dguKsC0s8iGOMbluk1

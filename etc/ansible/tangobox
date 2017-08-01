@@ -64,7 +64,7 @@ tangobox
 tangobox
 
 [tango-sandbox-cc]
-tangobox ansible_ssh_host=192.168.105.178 desktop=True
+tangobox ansible_ssh_host=192.168.105.180 desktop=True
 
 [tango-sandbox-adb]
 tangobox
