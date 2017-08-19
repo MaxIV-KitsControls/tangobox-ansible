@@ -17,23 +17,23 @@
 - name: The logical volume is mounted to /var/lib/mysql
   mount: name=/var/lib/mysql src=/dev/database/mysql fstype=xfs state=mounted
   when: mysql_disk is defined
- 
+
 
 - name: Install MySQL
   action: yum name={{ item }}
-  with_items: mysql_packages
+  with_items: "{{ mysql_packages }}"
 
 # Prepare the system resources
 - name: Ensure enough resources for the mysql database
   lineinfile: dest=/etc/security/limits.conf insertbefore="^# End of file" regexp="^mysql\s*hard\s*nofile" line="mysql    hard    nofile    10240" state=present
-  tags: 
+  tags:
     - ulimit
   notify:
     - restart mysqld
 
 - name: Ensure enough resources for the mysql database
   lineinfile: dest=/etc/security/limits.conf insertbefore="^# End of file" regexp="^mysql\s*soft\s*nofile" line="mysql    soft    nofile    10240" state=present
-  tags: 
+  tags:
     - ulimit
   notify:
     - restart mysqld
@@ -42,7 +42,7 @@
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
 
 - name: Change the limit of openfile in systemd (CENTOS7+)
-  template: src=limits.conf dest=/etc/systemd/system/{{ mysql_daemon }}.service.d/limits.conf 
+  template: src=limits.conf dest=/etc/systemd/system/{{ mysql_daemon }}.service.d/limits.conf
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
   notify:
     - reload systemd daemon
@@ -51,7 +51,7 @@
 # Set the server configuration
 - name: Ensure the server has the correct configuration /etc/my.cnf
   ini_file: dest={{ mysql_etc_my_cnf }} section={{ mysql_server_my_cnf }} option={{ item.key }} value={{ item.value }} mode=0644
-  with_dict: mysql_server_settings | default({})
+  with_dict: "{{ mysql_server_settings | default({}) }}"
   notify:
     - restart mysqld
 
@@ -62,7 +62,7 @@
 - name: delete anonymous MySQL users
   action: mysql_user user="" host={{ item }} state="absent"
   with_items:
-    - localhost 
+    - localhost
     - "{{ ansible_hostname }}"
     - "{{ ansible_fqdn }}"
 
@@ -71,13 +71,13 @@
 
 - name: Mysql | Check if the root password has been already set
   stat: path=/root/.my.cnf
-  register: st 
+  register: st
   when: mysql_root_password is not defined
   tags: mysql_passd
 
 
 - name: Mysql | Generate a new root password
-  set_fact: 
+  set_fact:
     mysql_root_password: "{{ lookup('password', '/tmp/'+ inventory_hostname +' length=6' ) }}"
     #mysql_root_password: "root"
   when: mysql_root_password is not defined and st.stat.exists == False
@@ -102,4 +102,3 @@
   notify:
     - restart mysqld
   tags: mysql_passd
-

@@ -1,17 +1,17 @@
 ---
 # Basic installation
 
-- name: Install EPEL repo.
-  yum:
-    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
-    state: present
-  when: ansible_os_family == "RedHat"
-
-- name: Import EPEL GPG key.
-  rpm_key:
-    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
-    state: present
-  when: ansible_os_family == "RedHat"
+# - name: Install EPEL repo.
+#   yum:
+#     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+#     state: present
+#   when: ansible_os_family == "RedHat"
+#
+# - name: Import EPEL GPG key.
+#   rpm_key:
+#     key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+#     state: present
+#   when: ansible_os_family == "RedHat"
 
 # SPECIAL MAXIV
 - name: ensure CentOS-Base Repository is configured for the MAXIV domain
