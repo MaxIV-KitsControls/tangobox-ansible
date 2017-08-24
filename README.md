@@ -21,57 +21,59 @@ Let's have fun.
 From a Master
 -------------
 Here the master is any computer that can ssh your bare metal Operating System (See compatible OS above).
-0 Install Ansible. use yum or apt-get install ansible
 
-1 Download the tangobox-ansible on the computer to configure (master=target) or another one (master)
+0. Install Ansible. use yum or apt-get install ansible
 
-2 Go to the etc/ansible directory
+1. Download the tangobox-ansible on the computer to configure (master=target) or another one (master)
+
+2. Go to the etc/ansible directory
 ```shell
  cd etc/ansible
 ```
 
-3 Configure the ip of the target in the tangobox file. Ansible calls that 'Inventory'
+3. Configure the ip of the target in the tangobox file. Ansible calls that 'Inventory'
 ```vi
 65: [tango-sandbox-cc]
 66: tangobox ansible_ssh_host=[10.0.1.30] desktop=True
 ```
 
-4 Runs the basic configuration. Use a user with su or sudo privilege with the flag '-u'; by default ansible take your current login.
+4. Runs the basic configuration. Use a user with su or sudo privilege with the flag '-u'; by default ansible take your current login.
 ```shell
  ansible-playbook -i tangobox -u root -k basic.yml
 ```
 
-5 Runs the cs configuration to install a full Tango Control System. From the application of the basic conf you should have a tango account.
+5. Runs the cs configuration to install a full Tango Control System. From the application of the basic conf you should have a tango account.
 ```shell
  ansible-playbook -i tangobox -u tango -k cs.yml
 ```
 
-6 Enjoy
+6. Enjoy
 
 From the localhost (target)
 ---------------------------
 Here the target is your bare metal Operating System (See compatible OS above).
-0 Install Ansible
 
-1 Download the tangobox-ansible on the computer to configure (master=target) or another one (master)
+0. Install Ansible
 
-2 Go to the etc/ansible directory
+1. Download the tangobox-ansible on the computer to configure (master=target) or another one (master)
+
+2. Go to the etc/ansible directory
 ```shell
  cd etc/ansible
 ```
 
-3 Runs the basic configuration. Use a user with su or sudo privilege with the flag '-u'; by default ansible take your current login.
+3. Runs the basic configuration. Use a user with su or sudo privilege with the flag '-u'; by default ansible take your current login.
 ```shell
  ansible-playbook -i tangobox-localhost -u root -k basic.yml
 ```
 After that the root account should be disabled from ssh connection. The rest of the command should be execute with the new tango account.
 
-4 Runs the cs configuration to install a full Tango Control System. From the application of the basic conf you should have a tango account.
+4. Runs the cs configuration to install a full Tango Control System. From the application of the basic conf you should have a tango account.
 ```shell
  ansible-playbook -i tangobox-localhost -u tango -k cs.yml
 ```
 
-5 Enjoy
+5. Enjoy
 
 FEATURES
 ========
