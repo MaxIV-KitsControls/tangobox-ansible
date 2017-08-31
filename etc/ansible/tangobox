@@ -6,8 +6,8 @@
 #                       #
 #########################
 [all:vars]
-domain=cps.uj.edu.pl
-nfs_server=192.168.130.165
+domain=tango-controls.org
+#nfs_server=srv-storage-0.maxiv.lu.se
 
 # Overwrite the default os server if the control system is located in the private network
 # default is private
@@ -17,10 +17,9 @@ network=public
 tango_rpm_server=http://pubrepo.maxiv.lu.se/rpm
 
 # defined the local server only if in a private network (network=private)
-#ntp_server=192.168.100.29
-#repo_server=dl.fedoraproject.org/pub
-repo_server=mirror.centos.org
-#ldap_server=ldap.m.cps.uj.edu.pl
+#ntp_server=ntp.maxiv.lu.se
+#repo_server=repo.maxiv.lu.se
+#ldap_server=srv-ldap-2.maxiv.lu.se
 #smtp_server=smtp.maxiv.lu.se
 
 # Host variables
@@ -53,8 +52,8 @@ tango-sandbox-adb
 
 # This define the variables of this control system
 [tango-sandbox:vars]
-tango_host=tango.m.cps.uj.edu.pl:10000
-icepapcms_db=192.168.105.236
+tango_host=127.0.0.1:10000
+icepapcms_db=tangobox
 client_server=tangobox
 
 [tango-sandbox-cs]
@@ -64,7 +63,7 @@ tangobox
 tangobox
 
 [tango-sandbox-cc]
-tangobox ansible_ssh_host=192.168.105.180 desktop=True
+tangobox ansible_ssh_host=10.0.1.30 desktop=True
 
 [tango-sandbox-adb]
 tangobox
