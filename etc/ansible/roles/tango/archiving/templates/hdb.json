@@ -15,7 +15,13 @@
                         "hasDiary": "false",
                         "HasThreadedStartup": "true",
                         "isDedicated": "false",
-                        "reservedAttributes": ""
+                        "reservedAttributes": "",
+                "DbCnxInactivityTimeout": "1800",
+                "DbHost": "{{ inventory_hostname }}",
+                "DbMaxPoolSize": "10",
+                "DbMinPoolSize": "2",
+                "DbName": "hdb",
+                "Facility": "false"
                     }
                 }{% if not loop.last %},{% endif %}
 
@@ -63,18 +69,6 @@
                        "DbUser": "hdbbrowser"
                     }
                 }
-            }
-        }
-    },
-    "classes": {
-        "{{ hdb.clazz }}":{
-            "properties":{
-                "DbCnxInactivityTimeout": "1800",
-                "DbHost": "{{ inventory_hostname }}",
-                "DbMaxPoolSize": "10",
-                "DbMinPoolSize": "2",
-                "DbName": "hdb",
-                "Facility": "false"
             }
         }
     }

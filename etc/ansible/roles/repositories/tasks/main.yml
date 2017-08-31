@@ -1,7 +1,18 @@
 ---
 # Basic installation
 
-  
+# - name: Install EPEL repo.
+#   yum:
+#     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+#     state: present
+#   when: ansible_os_family == "RedHat"
+#
+# - name: Import EPEL GPG key.
+#   rpm_key:
+#     key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+#     state: present
+#   when: ansible_os_family == "RedHat"
+
 # SPECIAL MAXIV
 - name: ensure CentOS-Base Repository is configured for the MAXIV domain
   template: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
@@ -25,8 +36,12 @@
 #/SPECIAL MAXIV
 
 - name: ensure the epel package are present
-  yum: pkg=epel-release state=latest
+  yum: pkg=epel-release state=latest update_cache=yes
+  when: ansible_os_family == "RedHat"
 
+- name: ensure the zsh shell package are present
+  yum: pkg=zsh state=present
+  when: ansible_os_family == "RedHat"
 
 # Public network configuration (for the TangoBox)
 - name: ensure the Public Tango Yum repo is installed
@@ -34,7 +49,7 @@
   when: network=='public'
 
 - name: Check if the pxe repo exists
-  stat: path=/etc/yum.repos.d/cobbler-config.repo 
+  stat: path=/etc/yum.repos.d/cobbler-config.repo
   register: st
   when: network=='public'
 
@@ -48,7 +63,7 @@
 - name: ensure the MaxLab Software Factory Yum repo is installed
   template: src=swfactory.repo dest=/etc/yum.repos.d/swfactory.repo owner=root group=root mode=0644
   when: domain=='maxlab.lu.se' or domain=='maxiv.lu.se'
-  
+
 - name: ensure the old MaxLab Yum repo is removed
   file: path=/etc/yum.repos.d/maxlab.repo state=absent
   when: domain=='maxlab.lu.se' or domain=='maxiv.lu.se'

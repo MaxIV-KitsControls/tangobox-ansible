@@ -2,4 +2,5 @@ java_oracle:
   rpm:
     base_url: http://download.oracle.com/otn-pub/java/jdk/8u60-b27/
     version: jdk1.8.0_60
-    name: jdk-8u60-linux-x64.rpm
+    name: jdk-8u144-linux-x64.rpm
+#    name: jdk-8u60-linux-x64.rpm

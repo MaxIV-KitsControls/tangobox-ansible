@@ -9,12 +9,19 @@
   tags:
     - TANGO_HOST
 
-- name: ensure the Tango dsconfig packages is present
+- name: ensure the PyTango  packages is present
   yum: pkg={{ item }} state=latest
   with_items:
     - python-pytango
-    - python-dsconfig
-    
+#    - python-dsconfig
+
+# test: json2tango -o -d -v -w ~/.tango/hdb.json
+- name: ensure the Tango dsconfig packages is present
+  yum: pkg={{ item }} state=present
+  with_items:
+#    - python-dsconfig
+    - python-dsconfig-1.1.1-1.el7.centos.maxlab
+
 - name: ensure Tango Host is correctly configured
   template: src=tangorc dest=/etc/tangorc owner=root group=root mode=0644
   tags:

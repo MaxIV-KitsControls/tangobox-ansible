@@ -9,8 +9,13 @@
   stat: path=/usr/java/{{ java_oracle.rpm.version }}/bin/java
   register: st
 
+#Test
+
+#/Test
+
 - name: Download the Oracle Java RPM
-  shell: 'wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" {{ java_oracle.rpm.base_url}}{{ java_oracle.rpm.name }}'
+  #shell: 'wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" {{ java_oracle.rpm.base_url}}{{ java_oracle.rpm.name }}'
+  shell: 'wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm" '
   #get_url: 'validate_certs=no  --no-cookies headers="Cookie\: oraclelicense=accept-securebackup-cookie" url={{ java_oracle.rpm.base_url}}{{ java_oracle.rpm.name }}'
   when: network=='public' and st.stat.exists==False
 

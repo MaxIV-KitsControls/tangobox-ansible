@@ -66,7 +66,7 @@ tangobox
 tangobox ansible_ssh_host=10.0.1.30 desktop=True
 
 [tango-sandbox-adb]
-tangobox 
+tangobox
 
 [tango-sandbox-elog]
 tangobox
@@ -88,6 +88,6 @@ tango-sandbox-adb
 
 [icepap-db:children]
 tango-sandbox-cs
- 
+
 [icepap-client:children]
 tango-sandbox-cc
